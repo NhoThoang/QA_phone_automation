@@ -1,4 +1,4 @@
-from qa_automation_adb.config import run_command_text
+from QA_automation_phone.config import run_command_text
 def get_screen_size(device: str)->list:
     command = f"adb -s {device} shell wm size"
     size = run_command_text(command=command)

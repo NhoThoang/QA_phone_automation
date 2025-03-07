@@ -1,4 +1,4 @@
-from qa_automation_adb.config import *
+from QA_automation_phone.config import *
 
 def get_xml_content(device: str)->str:
     command = f"adb -s {device} exec-out uiautomator dump /dev/stdout"

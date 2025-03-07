@@ -84,8 +84,8 @@
 
 
 
-from qa_automation_adb import coreapp, devices
-from qa_automation_adb.coreapp import u2
+from QA_automation_phone import coreapp, devices
+from QA_automation_phone.coreapp import u2
 import time
 import threading
 devicess = devices.get_devices()
