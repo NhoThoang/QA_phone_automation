@@ -1,4 +1,4 @@
-# README: UIAutomator2 Dump Screen Project
+# UIAutomator2 Dump Screen Project
 
 ## Mục đích
 Dự án này sử dụng `uiautomator2` để kết nối từ laptop tới server trên điện thoại Android, thực hiện dump màn hình và trả dữ liệu về laptop.
