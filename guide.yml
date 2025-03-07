@@ -1,3 +1,56 @@
 # Cài đặt driver và khởi động server
 adb devices  # Kiểm tra kết nối thiết bị
 python -m uiautomator2 init
+
+create file license
+create file pyproject.toml
+pip install setuptools wheel twine
+python -m build
+twine upload dist/*
+
+
+license
+GNU GENERAL PUBLIC LICENSE  
+Version 3, 29 June 2007  
+
+Copyright (c) 2025 Thoang  
+
+This program is free software: you can redistribute it and/or modify  
+it under the terms of the GNU General Public License as published by  
+the Free Software Foundation, either version 3 of the License, or  
+(at your option) any later version.  
+
+This program is distributed in the hope that it will be useful,  
+but WITHOUT ANY WARRANTY; without even the implied warranty of  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the  
+GNU General Public License for more details.  
+
+You should have received a copy of the GNU General Public License  
+along with this program. If not, see <https://www.gnu.org/licenses/>.  
+
+
+pyproject.toml
+[project]
+name = "QA_automation_phone"
+version = "0.1.0"
+description = "Automation test for phone"
+readme = "README.md"
+license = { text = "GPL-3.0-only" }
+authors = [
+    { name = "Thoang", email = "nhothoang@gmail.com" }
+]
+dependencies = [
+    "uiautomator2>=3.2.8,<4.0"
+]
+
+[project.urls]
+Documentation = "https://github.com/NhoThoang/QA_phone_automation/blob/main/README.md"
+Source = "https://github.com/NhoThoang/QA_phone_automation.git"
+Tracker = "https://github.com/NhoThoang/QA_phone_automation/issues"
+
+[tool.setuptools]
+packages = ["QA_automation_phone"]  # Thêm tên package chính xác vào đây nếu cần
+
+[build-system]
+requires = ["setuptools>=40.8.0", "wheel"]
+build-backend = "setuptools.build_meta"

@@ -11,23 +11,57 @@ Dự án này sử dụng `uiautomator2` để kết nối từ laptop tới ser
 ## Cài đặt
 1. Cài đặt `qa_phone_automation` trên laptop:
 ```bash
-pip install -U qaautomation
+pip install QA-automation-phone
 ```
 
 2. Kết nối điện thoại với `qaautomation`:
 ```python
-import uiautomator2 as u2
+from QA_automation_phone import coreapp, devices
+from QA_automation_phone.coreapp import u2
+import time
+import threading
+devicess = devices.get_devices()
+def run(device_id):
+    print("start")
+    connect= u2.connect(device_id)
+    start = time.time()
+    if coreapp.click_element(device_id,connect, "text", "Settings", 0, 2):
+        print("Clicked")
+    else: 
+        print("Not clicked")
+    print(time.time()-start)
 
-device = u2.connect('device_ip')
-print(device.info)
+threads = []
+for device in devicess:
+    t = threading.Thread(target=run, args=(device,))
+    threads.append(t)
+for thread in threads:
+    thread.start()
 ```
 
 ## Cách sử dụng
 ```python
-from coreapp import get_xml_content
+from QA_automation_phone import coreapp, devices
+from QA_automation_phone.coreapp import u2
+import time
+import threading
+devicess = devices.get_devices()
+def run(device_id):
+    print("start")
+    connect= u2.connect(device_id)
+    start = time.time()
+    if coreapp.click_element(device_id,connect, "text", "Settings", 0, 2):
+        print("Clicked")
+    else: 
+        print("Not clicked")
+    print(time.time()-start)
 
-xml_data = get_xml_content('device_id', type='uiautomator')
-print(xml_data)
+threads = []
+for device in devicess:
+    t = threading.Thread(target=run, args=(device,))
+    threads.append(t)
+for thread in threads:
+    thread.start()
 ```
 
 ## Lưu ý
