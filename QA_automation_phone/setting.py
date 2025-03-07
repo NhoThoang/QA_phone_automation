@@ -1,4 +1,4 @@
-from config import run_command
+from QA_automation_phone.config import run_command
 
 class settings:
     def __init__(self, device=None) -> None:
