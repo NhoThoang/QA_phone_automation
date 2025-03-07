@@ -1,0 +1,3 @@
+# Cài đặt driver và khởi động server
+adb devices  # Kiểm tra kết nối thiết bị
+python -m uiautomator2 init
