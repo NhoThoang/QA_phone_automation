@@ -3,7 +3,7 @@
 ## Mục đích
 Dự án này sử dụng `uiautomator2` để kết nối từ laptop tới server trên điện thoại Android, thực hiện dump màn hình và trả dữ liệu về laptop.
 ## Sơ đồ kết nối
-![Sơ đồ kết nối](.picture/image1.png)
+![Sơ đồ kết nối](./picture/image1.png)
 
 - **Laptop:** Gửi yêu cầu dump màn hình qua `uiautomator2`.
 - **Điện thoại (Server UIAutomator2):** Nhận yêu cầu, thực hiện dump màn hình và gửi kết quả về laptop.
