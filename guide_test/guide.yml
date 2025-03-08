@@ -54,3 +54,52 @@ packages = ["QA_automation_phone"]  # Thêm tên package chính xác vào đây 
 [build-system]
 requires = ["setuptools>=40.8.0", "wheel"]
 build-backend = "setuptools.build_meta"
+#####################################################
+adb shell pm list packages
+
+package:com.samsung.android.provider.filterprovider
+package:com.sec.android.app.DataCreate
+package:com.android.cts.priv.ctsshim
+package:com.samsung.android.smartswitchassistant
+......
+
+android.settings.DATE_SETTINGS:
+      com.android.settings.APPLICATION_DEVELOPMENT_SETTINGS:
+      android.settings.LOCATION_SOURCE_SETTINGS:
+      android.settings.MEMORY_CARD_SETTINGS:
+      android.settings.LOCALE_SETTINGS:
+      android.search.action.SEARCH_SETTINGS:
+      android.net.vpn.SETTINGS:
+      ACCESSIBILITY_FEEDBACK_SETTINGS:
+      android.settings.ACCOUNT_SYNC_SETTINGS:
+      com.android.settings.DISPLAY_SETTINGS:
+      android.settings.INPUT_METHOD_SETTINGS:
+      android.settings.SOUND_SETTINGS:
+      android.settings.WIFI_SETTINGS:
+      android.settings.APPLICATION_SETTINGS:
+      com.android.settings.SOUND_SETTINGS:
+      android.settings.ACCOUNT_SYNC_SETTINGS_ADD_ACCOUNT:
+      android.settings.MANAGE_APPLICATIONS_SETTINGS:
+      android.settings.SYNC_SETTINGS:
+      android.settings.SETTINGS:
+      com.android.settings.DOCK_SETTINGS:
+      android.settings.ADD_ACCOUNT_SETTINGS:
+      android.settings.SECURITY_SETTINGS:
+      android.settings.DEVICE_INFO_SETTINGS:
+      android.settings.WIRELESS_SETTINGS:
+      android.settings.DISPLAY_SETTINGS:
+      android.settings.SYSTEM_UPDATE_SETTINGS:
+      android.settings.MANAGE_ALL_APPLICATIONS_SETTINGS:
+      android.settings.DATA_ROAMING_SETTINGS:
+      android.settings.APN_SETTINGS:
+      android.settings.USER_DICTIONARY_SETTINGS:
+      com.android.settings.VOICE_INPUT_OUTPUT_SETTINGS:
+      com.android.settings.TTS_SETTINGS:
+      android.settings.WIFI_IP_SETTINGS:
+      android.search.action.WEB_SEARCH_SETTINGS:
+      android.settings.BLUETOOTH_SETTINGS:
+      android.settings.AIRPLANE_MODE_SETTINGS:
+      android.settings.INTERNAL_STORAGE_SETTINGS:
+      android.settings.ACCESSIBILITY_SETTINGS:
+      com.android.settings.QUICK_LAUNCH_SETTINGS:
+      android.settings.PRIVACY_SETTINGS:

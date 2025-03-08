@@ -61,4 +61,17 @@ def scroll_left_right(device: str,type: Literal["left","right"], x1: int, x2: in
 def long_press(device: str, x: int, y: int, duration: int=1000):
     command = f"adb -s {device} shell input swipe {x} {y} {x} {y} {duration}"
     run_command(command=command)
+def open_app(device: str, package_name: str):
+    command = f"adb -s {device} shell am start -n {package_name}"
+    run_command(command=command)
 
+def open_app2(device, package):
+    command = f"adb -s {device} shell monkey -p {package} 1"
+    run_command(command=command)
+
+def close_app(device: str, package_name: str):
+    command = f"adb -s {device} shell am force-stop {package_name}"
+    run_command(command=command)
+def clear_cache(device: str):
+    command = f"adb -s {device} shell pm clear {device}"
+    run_command(command=command)

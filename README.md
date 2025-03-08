@@ -3,7 +3,7 @@
 ## Mục đích
 Dự án này sử dụng `uiautomator2` để kết nối từ laptop tới server trên điện thoại Android, thực hiện dump màn hình và trả dữ liệu về laptop.
 ## Sơ đồ kết nối
-![Sơ đồ kết nối](./picture/image1.png)
+![Sơ đồ kết nối](https://github.com/NhoThoang/QA_phone_automation/blob/main/picture/image1.png)
 
 - **Laptop:** Gửi yêu cầu dump màn hình qua `uiautomator2`.
 - **Điện thoại (Server UIAutomator2):** Nhận yêu cầu, thực hiện dump màn hình và gửi kết quả về laptop.
@@ -67,4 +67,7 @@ for thread in threads:
 ## Lưu ý
 - Điện thoại cần bật chế độ nhà phát triển và cấp quyền ADB.
 - Đảm bảo `uiautomator2` server đang chạy trên điện thoại.
+---
+✅ **Nếu thấy hay và giúp ích cho các bạn bạn có thể gửi quà cho mình nhé Thanks!**
+<img src="https://github.com/NhoThoang/QA_phone_automation/blob/main/picture/qr_pay.png" alt="QR Pay" width="100">
 

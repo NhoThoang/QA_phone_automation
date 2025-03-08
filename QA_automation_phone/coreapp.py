@@ -56,23 +56,12 @@ def tab_and_send_text_to_element(device: str, type: Literal["text","content-desc
     return None
 
 
-
-
-# devices = "R58NC2W4ZQK"
-# import time
-# start = time.time()
-# if click_element(device_id, "text", "Settings", 0, 2):
-#     print("Clicked")
-# else: 
-#     print("Not clicked")
-# print(time.time()-start)
-# def get_element(device: str, type: Literal["text","content-desc", "resource-id"], value: str)->str:
-#     xml_content = get_xml_content(device)
-#     if xml_content:
-#         if type == "text":
-#             element = f'"{value}"'
-#         elif type == "resourceId":
-#             element = f'"{value}"'
-#         print(element)
-# result = run_command("echo Hello World")
-# print(result)
+def get_bounds_all_element(connect: u2.connect, type: Literal["text","content-desc", "resource-id"]="text", value: str="", loop: int=2)->str:
+    xml = wait_for_element(connect, type, value, loop)
+    if xml:
+        convert = ET.fromstring(xml)
+        elements =  [element for element in convert.iter() if value in element.attrib.get(type,"")]
+        if elements:
+            return [element.attrib.get('bounds','') for element in elements]
+            # return elements[index].attrib.get('bounds','')
+    return None
