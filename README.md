@@ -69,5 +69,6 @@ for thread in threads:
 - Đảm bảo `uiautomator2` server đang chạy trên điện thoại.
 ---
 ✅ **Nếu thấy hay và giúp ích cho các bạn bạn có thể gửi quà cho mình nhé Thanks!**
+
 <img src="https://github.com/NhoThoang/QA_phone_automation/blob/main/picture/qr_pay.png" alt="QR Pay" width="100">
 
