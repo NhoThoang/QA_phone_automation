@@ -63,5 +63,25 @@ def get_bounds_all_element(connect: u2.connect, type: Literal["text","content-de
         elements =  [element for element in convert.iter() if value in element.attrib.get(type,"")]
         if elements:
             return [element.attrib.get('bounds','') for element in elements]
-            # return elements[index].attrib.get('bounds','')
-    return None
+        print(f"Not found element {type}: {value}")
+
+def scroll_top_find_element(device: str, x_screen: int, y_screen: int, connect: u2.connect, type: Literal["text","content-desc", "resource-id"]="text", value: str="",index: int=0, loop: int=2)->str:
+    for _ in range(loop):
+        xml = wait_for_element(connect, type, value, loop)
+        if xml:
+            convert = ET.fromstring(xml)
+            elements =  [element for element in convert.iter() if value in element.attrib.get(type,"")]
+            if elements:
+                return elements[index].attrib.get('bounds','')  
+        scroll_top_short(device=device, x_screen=x_screen, y_screen=y_screen)
+    print(f"Not found element {type}: {value}")
+def scroll_bottom_find_element(device: str, x_screen: int, y_screen: int, connect: u2.connect, type: Literal["text","content-desc", "resource-id"]="text", value: str="",index: int=0, loop: int=2)->str:
+    for _ in range(loop):
+        xml = wait_for_element(connect, type, value, loop)
+        if xml:
+            convert = ET.fromstring(xml)
+            elements =  [element for element in convert.iter() if value in element.attrib.get(type,"")]
+            if elements:
+                return elements[index].attrib.get('bounds','')  
+        scroll_bottom_short(device=device, x_screen=x_screen, y_screen=y_screen)
+    print(f"Not found element {type}: {value}")

@@ -58,6 +58,30 @@ def scroll_left_right(device: str,type: Literal["left","right"], x1: int, x2: in
         scroll_width(device, x1, x2, y, distance)
     else:
         scroll_width(device, x2, x1, y, distance)
+def scroll_top(device: str, x_screen: int, y_screen: int,  distance: int=300):
+    x= x_screen/2
+    y1 = y_screen*8/9
+    y2 = y_screen/10
+    scroll_height(device, x, y1, y2, distance)
+def scroll_bottom(device: str, x_screen: int, y_screen: int,  distance: int=300):
+    x= x_screen/2
+    y1 = y_screen/10
+    y2 = y_screen*8/9
+    scroll_height(device, x, y1, y2, distance)
+def scroll_top_short(device: str, x_screen: int, y_screen: int,  distance: int=300):
+    x= x_screen/2
+    y1 = y_screen/2
+    y2 = y_screen/9
+    scroll_height(device, x, y1, y2, distance)
+def scroll_bottom_short(device: str, x_screen: int, y_screen: int,  distance: int=300):
+    x= x_screen/2
+    y1 = y_screen/9
+    y2 = y_screen/2
+    scroll_height(device, x, y1, y2, distance)
+
+
+
+
 def long_press(device: str, x: int, y: int, duration: int=1000):
     command = f"adb -s {device} shell input swipe {x} {y} {x} {y} {duration}"
     run_command(command=command)
