@@ -13,7 +13,7 @@ def get_xml_content_uiautomator2(connect)->str:
     print("Not connected")
     return None
 
-def wait_for_element(connect: u2.connect, type: Literal["text","content-desc", "resource-id"], value: str, loop: int=2)->str:
+def wait_for_element(connect: u2.connect, type: Literal["text","content-desc", "resource-id"]="text", value: str="", loop: int=2)->str:
     for _ in range(loop):
         xml_content = get_xml_content_uiautomator2(connect)
         if xml_content:
@@ -27,7 +27,7 @@ def wait_for_element(connect: u2.connect, type: Literal["text","content-desc", "
                 if value in xml_content:
                     return xml_content
     return None
-def get_bounds(connect: u2.connect, type: Literal["text","content-desc", "resource-id"], value: str, index: int=0, loop: int=2)->str:
+def get_bounds(connect: u2.connect, type: Literal["text","content-desc", "resource-id"]="text", value: str="", index: int=0, loop: int=2)->str:
     xml = wait_for_element(connect, type, value, loop)
     if xml:
         convert = ET.fromstring(xml)
@@ -36,13 +36,13 @@ def get_bounds(connect: u2.connect, type: Literal["text","content-desc", "resour
             return elements[index].attrib.get('bounds','')
     return None
 
-def center_point_bounds(connect: u2.connect, type: Literal["text","content-desc", "resource-id"], value: str, index: int=0, loop: int=2)->tuple:
+def center_point_bounds(connect: u2.connect, type: Literal["text","content-desc", "resource-id"]="text", value: str="", index: int=0, loop: int=2)->tuple:
     bounds = get_bounds(connect, type, value, index, loop)
     if bounds:
         xy = eval(bounds.replace("][",","))
         return (xy[0]+xy[2])//2, (xy[1]+xy[3])//2
     return None
-def click_element(device: str, connect: u2.connect, type: Literal["text","content-desc", "resource-id"], value: str, index: int=0, loop: int=2):
+def click_element(device: str, connect: u2.connect, type: Literal["text","content-desc", "resource-id"]="text", value: str="", index: int=0, loop: int=2):
     xy = center_point_bounds(connect, type, value, index, loop)
     if xy:
         adb_click(device, xy[0], xy[1])
