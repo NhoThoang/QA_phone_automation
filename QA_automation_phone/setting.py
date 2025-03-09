@@ -54,3 +54,5 @@ def open_add_account(device: str):
     open_setting(device, 'ADD_ACCOUNT_SETTINGS')
 def open_setting_app(device: str):
     open_setting(device, 'SETTINGS')
+
+# permission 

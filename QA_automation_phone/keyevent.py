@@ -1,5 +1,4 @@
 from QA_automation_phone.config import adb_keyevent
-
 def press_home(device: str):
     adb_keyevent(device,3)
 def press_back(device: str):

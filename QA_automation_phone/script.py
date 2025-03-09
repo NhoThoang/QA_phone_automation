@@ -38,6 +38,7 @@ def screen_shot(device: str, output: str)->bool:
         return True
     else:
         return False
+
 def set_screen_timeout(device: str, timeout: int=15)->bool:
     command = f"adb -s {device} shell settings put system screen_off_timeout {timeout*1000}"
     result = run_command(command=command)

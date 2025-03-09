@@ -11,6 +11,6 @@ x_screen = int(screen_size[0])
 y_screen = int(screen_size[1])
 connect= u2.connect(devicess[0])
 # get template picture
-qa.get_crop_image(device=device, x1=100, y1=100, x2=200, y2=200, output_path="./pic1.png")
+qa.get_crop_image(device=device, x1=795, y1=1564, width=200, height=300, output_path="./pic1.png")
 # click tempalte picture 
-# qa.click_button_by_image(device=device, template_path="./pic1.png", threshold=0.8)
+qa.click_button_by_image(device=device, template_path="./pic1.png", threshold=0.8)
