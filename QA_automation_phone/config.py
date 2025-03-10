@@ -1,9 +1,5 @@
-import subprocess
-import xml.etree.ElementTree as ET
-import uiautomator2 as u2
+import subprocess, time, math
 from typing import Literal
-
-
 def run_command(command: str) -> dict:
     process = subprocess.Popen(
         command, 

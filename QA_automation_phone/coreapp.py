@@ -1,6 +1,7 @@
-from QA_automation_phone.config import *
-import time, math
-# from QA_automation_phone.identify_image import screen_short_save_ram
+from QA_automation_phone.config import Literal, run_command_text, adb_click, adb_click_send, scroll_center_down, scroll_center_up, time, math
+import xml.etree.ElementTree as ET
+import uiautomator2 as u2
+
 ElementType = Literal["text", "content-desc", "resource-id"]
 def get_xml_content(device: str)->str:
     command = f"adb -s {device} exec-out uiautomator dump /dev/stdout"
@@ -16,22 +17,26 @@ def get_xml_content_uiautomator2(connect)->str:
     return None
 
 def wait_for_element(connect: u2.connect, value: str="", wait_time: int=2)->str:
-    for _ in range(math.ceil(wait_time/2)):
+    loop = math.ceil(wait_time/2)
+    for _ in range(loop):
         xml_content = get_xml_content_uiautomator2(connect)
         if xml_content:
             if value in xml_content:
                 return xml_content
-        time.sleep(0.5)
+        if loop > 1:
+            time.sleep(0.5)
         # print(f"Waiting for element {type}: {value}...")
     return None
 def wait_for_element_index(connect: u2.connect, value: str="",index: int=0, wait_time: int=2)->str:
-    for _ in range(math.ceil(wait_time/2)):
+    loop = math.ceil(wait_time/2)
+    for _ in range(loop):
         xml_content = get_xml_content_uiautomator2(connect)
         if xml_content:
             count = xml_content.count(value)
             if count > index:
                 return xml_content
-        time.sleep(0.5)
+        if loop > 1:
+            time.sleep(0.5)
     return None
 def get_bounds(connect: u2.connect, type: ElementType="text", value: str="", index: int=0, wait_time: int=2)->str:
     xml = wait_for_element(connect, value, wait_time)
@@ -77,21 +82,21 @@ def scroll_top_find_element_click(device: str, x_screen: int, y_screen: int, con
             return True
         scroll_center_up(device=device, x_screen=x_screen, y_screen=y_screen, duration=duration)
         time.sleep(1)
-    print(f"scroll top not found element {type}: {value} to click")
+    # print(f"scroll top not found element {type}: {value} to click")
 def scroll_bottom_find_element_click(device: str, x_screen: int, y_screen: int, connect: u2.connect, type: ElementType="text", value: str="",index: int=0, duration: int=300, loop: int=2)->bool:
     for _ in range(loop):
         if click_element(device=device, connect=connect, type=type, value=value, index=index, wait_time=2):
             return True
         scroll_center_down(device=device, x_screen=x_screen, y_screen=y_screen,duration=duration)
         time.sleep(1)
-    print(f"scroll bottom not found element {type}: {value} to click")
+    # print(f"scroll bottom not found element {type}: {value} to click")
 def scroll_up_down_find_element_click(device: str, x_screen: int, y_screen: int, connect: u2.connect, type: ElementType="text", value: str="",index: int=0, duration: int=300, loop: int=2)->bool:
     if scroll_top_find_element_click(device=device, x_screen=x_screen, y_screen=y_screen, connect=connect, type=type, value=value, index=index,duration=duration, loop=loop):
         return True  
     time.sleep(1)
     if scroll_bottom_find_element_click(device=device, x_screen=x_screen, y_screen=y_screen, connect=connect, type=type, value=value, index=index,duration=duration, loop=loop):
         return True
-    print(f"scroll up down not found element {type}: {value} to click")
+    # print(f"scroll up down not found element {type}: {value} to click")
 
 def scroll_top_find_element(device: str, x_screen: int, y_screen: int, connect: u2.connect, type: ElementType="text", value: str="",duration: int=300, loop: int=2)->bool:
     for _ in range(loop):
@@ -99,14 +104,14 @@ def scroll_top_find_element(device: str, x_screen: int, y_screen: int, connect: 
             return True
         scroll_center_up(device=device, x_screen=x_screen, y_screen=y_screen,duration=duration)
         time.sleep(1)
-    print(f"scroll top not found element {type}: {value}")
+    # print(f"scroll top not found element {type}: {value}")
 def scroll_bottom_find_element(device: str, x_screen: int, y_screen: int, connect: u2.connect, type: ElementType="text", value: str="", duration: int=300, loop: int=2)->bool:
     for _ in range(loop):
         if wait_for_element(connect=connect, type=type, value=value, wait_time=2):
             return True
         scroll_center_down(device=device, x_screen=x_screen, y_screen=y_screen,duration=duration)
         time.sleep(1)
-    print(f"scroll bottom not found element {type}: {value}")
+    # print(f"scroll bottom not found element {type}: {value}")
 def scroll_up_down_find_element(device: str, x_screen: int, y_screen: int, connect: u2.connect, type: ElementType="text", value: str="", duration: int=300, loop: int=2)->bool:
     if scroll_top_find_element(device=device, x_screen=x_screen, y_screen=y_screen, connect=connect, type=type, value=value,duration=duration, loop=loop):
         return True    
@@ -122,8 +127,6 @@ def scroll_up_down_find_element(device: str, x_screen: int, y_screen: int, conne
 #         return True
 #     else:
 #         return False
-
-
 
 def get_package(device: str)->str:
     command = f"adb -s {device} shell pm list packages"

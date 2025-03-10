@@ -3,9 +3,8 @@ import cv2
 import numpy as np
 from io import BytesIO
 from PIL import Image
-from QA_automation_phone.config import run_command
-# from typing import Literal
-def screenshot(connect: u2.connect):
+from QA_automation_phone.config import run_command,scroll_center_down, scroll_center_up, Literal, time, math
+def screenshot_to_cv2(connect: u2.connect):
     screenshot = connect.screenshot()
     image_bytes = BytesIO()
     screenshot.save(image_bytes, format='PNG')
@@ -23,9 +22,8 @@ def get_crop_image(device: str, x1: int, y1: int, width: int, height: int, outpu
         return True
     else:
         return False
-def click_button_by_image(device: str, template_path: str, threshold: float = 0.8) -> bool:
-    device = u2.connect(device)
-    screenshot = device.screenshot()
+def find_button_by_image(connect: u2.connect, template_path: str, threshold: float = 0.8) -> bool:
+    screenshot = connect.screenshot()
     image_bytes = BytesIO()
     screenshot.save(image_bytes, format='PNG')
     image_bytes.seek(0)
@@ -40,8 +38,43 @@ def click_button_by_image(device: str, template_path: str, threshold: float = 0.
         h, w = template_gray.shape
         center_x = max_loc[0] + w / 2
         center_y = max_loc[1] + h / 2
+        return center_x, center_y, max_val
+    print(f"threshold lớn nhất la: {max_val}<{threshold}")
+    return False
+def click_button_by_image(connect: u2.connect, template_path: str, threshold: float = 0.8) -> bool:
+    center_x, center_y, max_val = find_button_by_image(connect=connect, template_path=template_path, threshold=threshold)
+    if center_x and center_y:
         # print(f"Found button image at ({center_x}, {center_y}) with confidence {max_val:.2f}")
-        device.click(center_x, center_y)
+        connect.click(center_x, center_y)
         return center_x, center_y
     print(f"threshold lớn nhất la: {max_val}<{threshold}")
     return False
+def find_images_scroll_up_or_down(connect: u2.connect,device: str,x_screen: int, y_screen: int, duration: int, type: Literal["up", "down"], template_path: str, threshold: float = 0.8, loop: int=2)->bool:
+    for _ in range(loop):
+        data = find_button_by_image(connect=connect, template_path=template_path, threshold=threshold)
+        if not data:
+            if type == "up":
+                if not scroll_center_up(device=device, x_screen=x_screen, y_screen=y_screen, duration=duration):
+                    print(f"not scroll center up find {template_path}")
+                    return False
+            else:
+                if not scroll_center_down(device=device, x_screen=x_screen, y_screen=y_screen, duration=duration):
+                    print(f"not scroll center down find {template_path}")
+                    return False
+            time.sleep(0.5)
+        else:
+            return data
+    print(f"not find {template_path} threshold lớn nhất la: {data[2]}<{threshold}")
+    return False
+def find_images_click_scroll_up_or_down_(connect: u2.connect,device: str,x_screen: int, y_screen: int, duration: int, type: Literal["up", "down"], template_path: str, threshold: float = 0.8, loop: int=2)->bool:
+    data = find_images_scroll_up_or_down(connect=connect,device=device,x_screen=x_screen, y_screen=y_screen, duration=duration, type=type, template_path=template_path, threshold=threshold, loop=loop)
+    if data:
+        connect.click(data[0], data[1])
+        return True
+    print(f"not click {template_path} threshold lớn nhất la: {data[2]}<{threshold}")
+    return False
+
+# 
+
+# scroll find image 
+# scroll and click image

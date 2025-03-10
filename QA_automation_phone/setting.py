@@ -1,5 +1,4 @@
 from QA_automation_phone.config import run_command
-
 def open_setting(device: str, setting: str):
     command = f'adb -s {device} shell am start -a android.settings.{setting}'
     run_command(command=command)

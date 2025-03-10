@@ -30,3 +30,11 @@ def get_devices()->list:
                 print("Error: ",e)
     return decvices
    
+def get_model(devices):
+    models = []
+    for device in devices:
+        command = f'adb -s {device} shell getprop ro.product.model'
+        result = run_command_text(command=command)
+        if result['returncode'] == 0:
+            models.append(result['stdout'])
+    return models
