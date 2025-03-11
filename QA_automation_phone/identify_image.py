@@ -3,15 +3,18 @@ import cv2
 import numpy as np
 from io import BytesIO
 from PIL import Image
-from QA_automation_phone.config import run_command,scroll_center_down, scroll_center_up, Literal, time, math
+from QA_automation_phone.config import run_command, scroll_center_up_or_down, Literal, time, math
+# def screenshot_to_cv2(connect: u2.connect):
+#     screenshot = connect.screenshot()
+#     image_bytes = BytesIO()
+#     screenshot.save(image_bytes, format='PNG')
+#     image_bytes.seek(0)
+#     pil_image = Image.open(image_bytes)
+#     image = cv2.cvtColor(np.array(pil_image), cv2.COLOR_RGB2BGR)
+#     return image
 def screenshot_to_cv2(connect: u2.connect):
-    screenshot = connect.screenshot()
-    image_bytes = BytesIO()
-    screenshot.save(image_bytes, format='PNG')
-    image_bytes.seek(0)
-    pil_image = Image.open(image_bytes)
-    image = cv2.cvtColor(np.array(pil_image), cv2.COLOR_RGB2BGR)
-    return image
+    return cv2.cvtColor(np.array(connect.screenshot()), cv2.COLOR_RGB2BGR)
+
 def get_crop_image(device: str, x1: int, y1: int, width: int, height: int, output_path: str="./template.png")->bool:
     command = f"adb -s {device} exec-out screencap -p"
     stauts = run_command(command=command)
@@ -22,7 +25,11 @@ def get_crop_image(device: str, x1: int, y1: int, width: int, height: int, outpu
         return True
     else:
         return False
-def find_button_by_image(connect: u2.connect, template_path: str, threshold: float = 0.8) -> bool:
+def are_images_identical(img1, img2):
+    return np.array_equal(img1, img2)
+
+
+def find_button_by_image(connect: u2.connect, template_path: str, threshold: float = 0.8,click: bool = False) -> bool:
     screenshot = connect.screenshot()
     image_bytes = BytesIO()
     screenshot.save(image_bytes, format='PNG')
@@ -38,27 +45,31 @@ def find_button_by_image(connect: u2.connect, template_path: str, threshold: flo
         h, w = template_gray.shape
         center_x = max_loc[0] + w / 2
         center_y = max_loc[1] + h / 2
+        if click:
+            connect.click(center_x, center_y)
         return center_x, center_y, max_val
     print(f"threshold lớn nhất la: {max_val}<{threshold}")
     return False
-def click_button_by_image(connect: u2.connect, template_path: str, threshold: float = 0.8) -> bool:
-    center_x, center_y, max_val = find_button_by_image(connect=connect, template_path=template_path, threshold=threshold)
-    if center_x and center_y:
-        # print(f"Found button image at ({center_x}, {center_y}) with confidence {max_val:.2f}")
-        connect.click(center_x, center_y)
-        return center_x, center_y
-    print(f"threshold lớn nhất la: {max_val}<{threshold}")
-    return False
-def find_images_scroll_up_or_down(connect: u2.connect,device: str,x_screen: int, y_screen: int, duration: int, type: Literal["up", "down"], template_path: str, threshold: float = 0.8, loop: int=2)->bool:
-    for _ in range(loop):
+def find_images_scroll_up_or_down(
+    connect: u2.connect,
+    device: str,
+    x_screen: int,
+    y_screen: int,
+    template_path: str,
+    scroll_type: Literal["up", "down"]="up",
+    threshold: float = 0.8,
+    duration: int=800,
+    loop: int=2,
+    max_loop: int=20)->bool:
+    for _ in range(max_loop):
         data = find_button_by_image(connect=connect, template_path=template_path, threshold=threshold)
         if not data:
             if type == "up":
-                if not scroll_center_up(device=device, x_screen=x_screen, y_screen=y_screen, duration=duration):
+                if not scroll_center_up_or_down(device=device, x_screen=x_screen, y_screen=y_screen,type_scroll="up", duration=duration):
                     print(f"not scroll center up find {template_path}")
                     return False
             else:
-                if not scroll_center_down(device=device, x_screen=x_screen, y_screen=y_screen, duration=duration):
+                if not scroll_center_up_or_down(device=device, x_screen=x_screen, y_screen=y_screen,type_scroll="down", duration=duration):
                     print(f"not scroll center down find {template_path}")
                     return False
             time.sleep(0.5)

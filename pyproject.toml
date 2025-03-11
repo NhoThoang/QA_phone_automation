@@ -1,6 +1,6 @@
 [project]
 name = "QA_automation_phone"
-version = "0.1.2"
+version = "0.1.3"
 description = "Automation test for phone"
 readme = "README.md"
 license = { text = "GPL-3.0-only" }
@@ -10,7 +10,8 @@ authors = [
 dependencies = [
     "uiautomator2>=3.2.8",
     "pytesseract>=0.3.13",
-    "opencv-python-headless>=4.11.0.86"
+    "opencv-python-headless>=4.11.0.86",
+    "weditor >= 0.7.3"
 
 ]
 

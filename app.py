@@ -133,9 +133,17 @@ connect= u2.connect(devicess[0])
 # (connect=connect, target_text="Profile", lang="eng", loop=5):
 # text = qa.get_text_from_image(connect=connect, lang="vie")
 # print(text)
-start = time.time()
-qa.orc_click_button_by_text(connect=connect, target_text="Samsung", lang="eng", loop=2, index=1)
-print(time.time()-start)
+
+
+# a=  qa.orc_find_text(connect=connect, target_text="Samsung", lang="eng", loop=1, click=True)
+# print(a)
+a=  qa.get_text_from_image(connect=connect, lang="eng")
+print(a)
+
+
+# start = time.time()
+# qa.orc_click_button_by_text(connect=connect, target_text="Samsung", lang="eng", loop=2, index=1)
+# print(time.time()-start)
 # get template picture
 # qa.get_crop_image(device=device, x1=795, y1=1564, width=200, height=300, output_path="./pic1.png")
 # # click tempalte picture 

@@ -71,7 +71,7 @@ def scroll_width(device: str, x1: int, x2: int, y: int, duration: int=300)->bool
         return True
     else:
         return False
-def scroll_up_or_down(device: str,type: Literal["up","down"], x: int, y1: int, y2: int, duration: int=300)->bool:
+def scroll_up_or_down(device: str, x: int, y1: int, y2: int,type: Literal["up","down"]="up", duration: int=300)->bool:
     if type == "up":
         if scroll_height(device, x, y1, y2, duration):
             return True
@@ -82,7 +82,7 @@ def scroll_up_or_down(device: str,type: Literal["up","down"], x: int, y1: int, y
             return True
         else:
             return False
-def scroll_left_or_right(device: str,type: Literal["left","right"], x1: int, x2: int, y: int, duration: int=300)->bool:
+def scroll_left_or_right(device: str, x1: int, x2: int, y: int,type: Literal["left","right"]="left", duration: int=300)->bool:
     if type == "left":
         if scroll_width(device, x1, x2, y, duration):
             return True
@@ -93,55 +93,64 @@ def scroll_left_or_right(device: str,type: Literal["left","right"], x1: int, x2:
             return True
         else:
             return False
-def scroll_top(device: str, x_screen: int, y_screen: int,  duration: int=300)->bool:
+def scroll_top_or_bottom(device: str, x_screen: int, y_screen: int, type_scroll: Literal["up", "down"] = "up", duration: int=300)->bool:
     x= int(x_screen/2)
     y1 = int(y_screen*8/9)
     y2 = int(y_screen/10)
-    if scroll_height(device, x, y1, y2, duration):
-        return True
+    if type_scroll == "up":
+        if scroll_height(device, x, y1, y2, duration):
+            return True
+        else:
+            return False
     else:
-        return False
-def scroll_bottom(device: str, x_screen: int, y_screen: int,  duration: int=300)->bool:
-    x= int(x_screen/2)
-    y1 = int(y_screen/10)
-    y2 = int(y_screen*8/9)
-    print(x,y1,y2)
-    if scroll_height(device, x, y1, y2, duration):
-        return True
-    else:
-        return False
-def scroll_top_short(device: str, x_screen: int, y_screen: int,  duration: int=300)->bool:
+        if scroll_height(device, x, y2, y1, duration):
+            return True
+        else:
+            return False
+
+def scroll_top_or_bottom_short(device: str, x_screen: int, y_screen: int,type_scroll: Literal["up", "down"] = "up",  duration: int=300)->bool:
     x= int(x_screen/2)
     y1 = int(y_screen/2)
     y2 = int(y_screen/9)
-    if scroll_height(device, x, y1, y2, duration):
-        return True
+    if type_scroll == "up":
+        if scroll_height(device, x, y1, y2, duration):
+            return True
+        else:
+            return False
     else:
-        return False
-def scroll_bottom_short(device: str, x_screen: int, y_screen: int,  duration: int=300)->bool:
-    x= int(x_screen/2)
-    y1 = int(y_screen/9)
-    y2 = int(y_screen/2)
-    if scroll_height(device, x, y1, y2, duration):
-        return True
-    else:
-        return False
-def scroll_center_up(device: str, x_screen: int, y_screen: int,  duration: int=300)->bool:
-    x= int(x_screen/2)
-    y1 = int(y_screen*3/4)
-    y2 = int(y_screen/4)
-    if scroll_height(device, x, y1, y2, duration):
-        return True
-    else:
-        return False
-def scroll_center_down(device: str, x_screen: int, y_screen: int,  duration: int=300)->bool:
+        if scroll_height(device, x, y2, y1, duration):
+            return True
+        else:
+            return False
+
+def scroll_center_up_or_down(device: str, x_screen: int, y_screen: int, type_scroll: Literal["up", "down"] = "up",  duration: int=300)->bool:
     x= int(x_screen/2)
     y1 = int(y_screen/4)
     y2 = int(y_screen*3/4)
-    if scroll_height(device, x, y1, y2, duration):
-        return True
+    if type_scroll == "up":
+        if scroll_height(device, x, y2, y1, duration):
+            return True
+        else:
+            return False
     else:
-        return False
+        if scroll_height(device, x, y1, y2, duration):
+            return True
+        else:
+            return False
+def scroll_center_up_or_down_short(device: str, x_screen: int, y_screen: int, type_scroll: Literal["up", "down"] = "up",  duration: int=300)->bool:
+    x= int(x_screen/2)
+    y1 = int(y_screen/4)
+    y2 = int(y_screen*3/5)
+    if type_scroll == "up":
+        if scroll_height(device, x, y2, y1, duration):
+            return True
+        else:
+            return False
+    else:
+        if scroll_height(device, x, y1, y2, duration):
+            return True
+        else:
+            return False
 def long_press(device: str, x: int, y: int, duration: int=1000)-> bool:
     command = f"adb -s {device} shell input swipe {x} {y} {x} {y} {duration}"
     status = run_command(command=command)

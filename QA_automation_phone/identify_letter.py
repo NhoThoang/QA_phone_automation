@@ -2,7 +2,7 @@ import uiautomator2 as u2
 import pytesseract, time
 from typing import Literal
 language = Literal["eng", "vie"]
-from QA_automation_phone.identify_image import screenshot_to_cv2,scroll_center_down, scroll_center_up
+from QA_automation_phone.identify_image import screenshot_to_cv2, scroll_center_up_or_down
 
 def get_text_from_image(connect: u2.connect, lang: language="eng") -> str:
     image = screenshot_to_cv2(connect=connect)
@@ -14,8 +14,6 @@ def orc_find_text(connect: u2.connect, target_text: str, lang: language="eng", l
         image = screenshot_to_cv2(connect)
         config = f'--oem 3 --psm 6 -l {lang}'
         text_data = pytesseract.image_to_data(image, config=config, output_type=pytesseract.Output.DICT)
-        print(text_data,"\n")
-        print(text_data["text"])
         for i, text in enumerate(text_data['text']):
             if target_text.lower() in text.lower():
                 x, y, w, h = (text_data['left'][i], text_data['top'][i], 
@@ -37,7 +35,7 @@ def orc_scroll_up_or_down_find_text(connect: u2.connect, target_text: str, lang:
                     connect.click(data[0]+data[2]/2, data[1]+data[3]/2)
                 return data
             else:
-                scroll_center_up(connect=connect, x_screen=data[0], y_screen=data[1], duration=duration)   
+                scroll_center_up_or_down(connect=connect, x_screen=data[0], y_screen=data[1],type_scroll="up", duration=duration)   
                 time.sleep(1)
         else:
             if data:
@@ -45,7 +43,7 @@ def orc_scroll_up_or_down_find_text(connect: u2.connect, target_text: str, lang:
                     connect.click(data[0]+data[2]/2, data[1]+data[3]/2)
                 return data
             else:
-                scroll_center_down(connect=connect, x_screen=data[0], y_screen=data[1], duration=duration)   
+                scroll_center_up_or_down(connect=connect, x_screen=data[0], y_screen=data[1],type_scroll="down", duration=duration)   
                 time.sleep(1)
     return False
 
@@ -81,7 +79,7 @@ def orc_scroll_up_or_down_find_text_with_index(connect: u2.connect,device: str,x
                     connect.click(data[0]+data[2]/2, data[1]+data[3]/2)
                 return data
             else:
-                scroll_center_up(device=device, x_screen=x_screen, y_screen=y_screen, duration=duration)
+                scroll_center_up_or_down(device=device, x_screen=x_screen, y_screen=y_screen, duration=duration)
                 time.sleep(1)
         else:
             if data:
@@ -89,7 +87,7 @@ def orc_scroll_up_or_down_find_text_with_index(connect: u2.connect,device: str,x
                     connect.click(data[0]+data[2]/2, data[1]+data[3]/2)
                 return data
             else:
-                scroll_center_down(device=device, x_screen=x_screen, y_screen=y_screen, duration=duration)
+                scroll_center_up_or_down(device=device, x_screen=x_screen, y_screen=y_screen,type_scroll="down", duration=duration)
                 time.sleep(1)
     return False
 
