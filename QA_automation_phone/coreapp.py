@@ -1,7 +1,8 @@
-from QA_automation_phone.config import (Literal, run_command_text, scroll_height, adb_click, adb_click_send,
-                                         scroll_center_up_or_down, scroll_top_or_bottom_short,scroll_center_up_or_down_short, time, math)
+from QA_automation_phone.config import (Literal, run_command_text, scroll_height, adb_click, adb_click_send,run_command,
+                                         scroll_center_up_or_down, scroll_top_or_bottom_short,scroll_center_up_or_down_short)
 import xml.etree.ElementTree as ET
 import uiautomator2 as u2
+import time, math
 
 ElementType = Literal["text", "content-desc", "resource-id"]
 def get_xml_content(device: str)->str:
@@ -199,8 +200,8 @@ def scroll_up_and_down_find_element(
     type_element: ElementType = "text",
     index: int = 0,
     duration: int=800,
-    click: bool = False)->bool:
-    if scroll_find_element(
+    click: bool = False)->tuple:
+    data =scroll_find_element(
         device=device,
         connect=connect,
         x_screen=x_screen,
@@ -210,9 +211,10 @@ def scroll_up_and_down_find_element(
         index=index,
         duration=duration,
         type_scroll="up",
-        click=click):
-        return True    
-    if scroll_find_element(
+        click=click)
+    if data:
+        return data   
+    data = scroll_find_element(
         device=device,
         connect=connect,
         x_screen=x_screen,
@@ -221,8 +223,9 @@ def scroll_up_and_down_find_element(
         type_element=type_element,
         index=index,
         duration=duration,
-        type_scroll="down"):
-        return True
+        type_scroll="down")
+    if data:
+        return data
     
  
 
@@ -231,7 +234,7 @@ def scroll_up_and_down_find_element(
 #     bounds = get_bounds(connect, type, value, index, wait_time)
 #     print(bounds)
 #     x1, y1, x2, y2 = eval(bounds.replace("][",","))
-#     if screen_short_save_ram(device=device, output_path=output_path, x1=x1, x2=x2, y1=y1, y2=y2):
+#     if screenshort(device=device, output_path=output_path, x1=x1, x2=x2, y1=y1, y2=y2):
 #         return True
 #     else:
 #         return False

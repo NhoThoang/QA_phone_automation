@@ -1,4 +1,5 @@
 import QA_automation_phone as qa
+import time
 from QA_automation_phone import u2
 devices = qa.get_devices()
 connect = u2.connect(devices[0])
@@ -11,7 +12,12 @@ y_screen = int(y_screen)
 # a= qa.scroll_find_element(device=devices[0],connect=connect,x_screen=x_screen, y_screen=y_screen,type_scroll="up", type_element="text",
 #     value="Blood glucose", duration=800, click=True)
 a= qa.scroll_up_and_down_find_element(device=devices[0],connect=connect,x_screen=x_screen, y_screen=y_screen, type_element="text",
-    value="Heart rate", duration=600)
-qa.click_element(device=devices[0],connect=connect, type_element="text", value="Heart rate", wait_time=2)
+    value="Heart rate", duration=800)
+x,y=a
+time.sleep(3)
+qa.adb_click(device=devices[0],x=x,y=y)
+# import time
+# time.sleep(2)
+# qa.click_element(device=devices[0],connect=connect, type_element="text", value="Heart rate", wait_time=2)
 
 print(a)
