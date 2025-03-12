@@ -1,0 +1,38 @@
+1. Đọc và ghi ảnh:
+
+cv2.imread(): Đọc ảnh từ file.
+cv2.imwrite(): Ghi ảnh vào file.
+2. Hiển thị ảnh:
+
+cv2.imshow(): Hiển thị ảnh trong cửa sổ.
+3. Thay đổi kích thước ảnh:
+
+cv2.resize(): Thay đổi kích thước ảnh.
+4. Chuyển đổi màu sắc:
+
+cv2.cvtColor(): Chuyển đổi không gian màu của ảnh.
+5. Vẽ hình cơ bản:
+
+cv2.line(): Vẽ đường thẳng.
+cv2.circle(): Vẽ đường tròn hoặc hình tròn.
+cv2.rectangle(): Vẽ hình chữ nhật.
+cv2.ellipse(): Vẽ đường elip hoặc hình elip.
+6. Xử lý hình thái học:
+
+cv2.erode(): Thao tác xói mòn.
+cv2.dilate(): Thao tác giãn nở.
+cv2.morphologyEx(): Các thao tác hình thái học khác.
+7. Phát hiện cạnh:
+
+cv2.Canny(): Phát hiện cạnh bằng thuật toán Canny.
+8. Biến đổi hình học:
+
+cv2.warpAffine(): Biến đổi affine.
+cv2.warpPerspective(): Biến đổi phối cảnh.
+9. Xử lý video:
+
+cv2.VideoCapture(): Mở và đọc video.
+cv2.VideoWriter(): Ghi video.
+10. Phát hiện và nhận dạng:
+
+cv2.CascadeClassifier(): Phát hiện đối tượng bằng phương pháp cascade.

@@ -2,16 +2,16 @@ import uiautomator2 as u2
 import pytesseract, time
 from typing import Literal
 language = Literal["eng", "vie"]
-from QA_automation_phone.identify_image import screenshot_to_cv2, scroll_center_up_or_down
+from QA_automation_phone.identify_image import screenshot_to_cv2_gray, scroll_center_up_or_down
 
 def get_text_from_image(connect: u2.connect, lang: language="eng") -> str:
-    image = screenshot_to_cv2(connect=connect)
+    image = screenshot_to_cv2_gray(connect=connect)
     config = f'--oem 3 --psm 6 -l {lang}'
     all_text = pytesseract.image_to_string(image, config=config)
     return all_text
 def orc_find_text(connect: u2.connect, target_text: str, lang: language="eng", loop: int=1, click: bool=False) -> tuple:
     for _ in range(loop):
-        image = screenshot_to_cv2(connect)
+        image = screenshot_to_cv2_gray(connect)
         config = f'--oem 3 --psm 6 -l {lang}'
         text_data = pytesseract.image_to_data(image, config=config, output_type=pytesseract.Output.DICT)
         for i, text in enumerate(text_data['text']):
@@ -50,7 +50,7 @@ def orc_scroll_up_or_down_find_text(connect: u2.connect, target_text: str, lang:
 
 def orc_find_text_with_index(connect: u2.connect, target_text: str, lang: language="eng", loop: int=1, index: int=0, click: bool=False) -> tuple:
     for _ in range(loop):
-        image = screenshot_to_cv2(connect)
+        image = screenshot_to_cv2_gray(connect)
         config = f'--oem 3 --psm 6 -l {lang}'
         text_data = pytesseract.image_to_data(image, config=config, output_type=pytesseract.Output.DICT)
         matched_indices = []

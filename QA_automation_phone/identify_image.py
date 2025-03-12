@@ -13,9 +13,15 @@ from QA_automation_phone.coreapp import (get_bounds, ElementType, run_command,
 #     pil_image = Image.open(image_bytes)
 #     image = cv2.cvtColor(np.array(pil_image), cv2.COLOR_RGB2BGR)
 #     return image
-def screenshot_to_cv2(connect: u2.connect):
+def screenshot_to_cv2_color(connect: u2.connect):
     return cv2.cvtColor(np.array(connect.screenshot()), cv2.COLOR_RGB2BGR)
-
+def screenshot_to_cv2_gray(connect: u2.connect):
+    return cv2.cvtColor(np.array(connect.screenshot()), cv2.COLOR_RGB2GRAY)
+def check_channel(image)->int:
+    if len(image.shape) == 3:
+        return 3
+    else:
+        return 1    
 def get_crop_image(device: str, x1: int, y1: int, width: int, height: int, output_path: str=None)->bool:
     command = f"adb -s {device} exec-out screencap -p"
     status = run_command(command=command)
@@ -37,7 +43,6 @@ def get_crop_image_by_text(
     index: int=0,
     wait_time: int=2)->bool:
     bounds = get_bounds(connect, value, type_element, index, wait_time)
-    print(bounds)
     if bounds:
         x1, y1, x2, y2 = eval(bounds.replace("][",","))
         width = x2-x1; height = y2-y1
@@ -49,12 +54,27 @@ def get_crop_image_by_text(
     return False
 def compare_images(img1: np.ndarray, img2: np.ndarray)->bool:
     return np.array_equal(img1, img2)
-
 def find_button_by_image_with_image(connect: u2.connect, template_path: str,screen_short, threshold: float = 0.8, click: bool = False)->bool:
     if not os.path.exists(template_path):
         print("not find template and screen short")
         return False
-    screen_gray = cv2.cvtColor(screen_short, cv2.COLOR_BGR2GRAY)
+    template_gray = cv2.imread(template_path, cv2.IMREAD_GRAYSCALE)
+    result = cv2.matchTemplate(screen_short, template_gray, cv2.TM_CCOEFF_NORMED)
+    _, max_val, _, max_loc = cv2.minMaxLoc(result)
+    if max_val >= threshold:
+        h, w = template_gray.shape
+        center_x, center_y = max_loc[0] + w / 2, max_loc[1] + h / 2
+        if click:
+            connect.click(center_x, center_y)
+        screen_short=None
+        template_gray=None
+        return center_x, center_y, max_val
+    # print(f"Not found image {template_path} threshold lớn nhất la: {max_val}<{threshold}")
+    screen_short=None
+    template_gray=None
+    return False  
+def find_button_by_image(connect: u2.connect, template_path: str, threshold: float = 0.8, click: bool = False)->bool:
+    screen_gray = screenshot_to_cv2_gray(connect=connect)
     template_gray = cv2.imread(template_path, cv2.IMREAD_GRAYSCALE)
     result = cv2.matchTemplate(screen_gray, template_gray, cv2.TM_CCOEFF_NORMED)
     _, max_val, _, max_loc = cv2.minMaxLoc(result)
@@ -63,21 +83,12 @@ def find_button_by_image_with_image(connect: u2.connect, template_path: str,scre
         center_x, center_y = max_loc[0] + w / 2, max_loc[1] + h / 2
         if click:
             connect.click(center_x, center_y)
+        screen_gray=None
+        template_gray=None
         return center_x, center_y, max_val
     print(f"Not found image {template_path} threshold lớn nhất la: {max_val}<{threshold}")
-    return False  
-def find_button_by_image(connect: u2.connect, template_path: str, threshold: float = 0.8, click: bool = False)->bool:
-    screen_gray = cv2.cvtColor(screenshot_to_cv2(connect), cv2.COLOR_BGR2GRAY)
-    template_gray = cv2.cvtColor(cv2.imread(template_path, cv2.IMREAD_GRAYSCALE), cv2.COLOR_BGR2GRAY)
-    result = cv2.matchTemplate(screen_gray, template_gray, cv2.TM_CCOEFF_NORMED)
-    _, max_val, _, max_loc = cv2.minMaxLoc(result)
-    if max_val >= threshold:
-        h, w = template_gray.shape
-        center_x, center_y = max_loc[0] + w / 2, max_loc[1] + h / 2
-        if click:
-            connect.click(center_x, center_y)
-        return center_x, center_y, max_val
-    print(f"Not found image {template_path} threshold lớn nhất la: {max_val}<{threshold}")
+    screen_gray=None
+    template_gray=None
     return False  
 def scroll_find_images(
     device: str,
@@ -101,7 +112,7 @@ def scroll_find_images(
             time.sleep(1)
             return find_button_by_image(connect=connect, template_path=template_path, threshold=threshold, click=click)
         return False
-    image_screen = screenshot_to_cv2(connect=connect)
+    image_screen = screenshot_to_cv2_gray(connect=connect)
     # print(image_screen)
     for _ in range(max_loop):
         data = find_button_by_image_with_image(connect=connect, template_path=template_path, screen_short=image_screen, threshold=threshold, click=click)
@@ -114,14 +125,15 @@ def scroll_find_images(
         if type_scroll == "up":
             scroll_center_up_or_down(device=device, x_screen=x_screen, y_screen=y_screen,type_scroll="up", duration=duration)
             time.sleep(1)
-            new_image = screenshot_to_cv2(connect=connect)
+            new_image = screenshot_to_cv2_gray(connect=connect)
             if compare_images(img1=image_screen, img2=new_image):
                 return False   
             image_screen = new_image
             # if comare 2 image 
         else:
             scroll_center_up_or_down(device=device, x_screen=x_screen, y_screen=y_screen,type_scroll="down", duration=duration)
-            new_image = screenshot_to_cv2(connect=connect)
+            time.sleep(1)
+            new_image = screenshot_to_cv2_gray(connect=connect)
             if compare_images(img1=image_screen, img2=new_image):
                 return False
             image_screen = new_image
@@ -168,7 +180,22 @@ def scroll_up_and_dow_find_images(
         return data
     
 
-# 
-
-# scroll find image 
-# scroll and click image
+# def find_button_by_image(connect: u2.connect, template_path: str, threshold: float = 0.8) -> bool:
+#     screenshot = connect.screenshot()
+#     image_bytes = BytesIO()
+#     screenshot.save(image_bytes, format='PNG')
+#     image_bytes.seek(0)
+#     pil_image = Image.open(image_bytes)
+#     screen_image = cv2.cvtColor(np.array(pil_image), cv2.COLOR_RGB2BGR)
+#     template = cv2.imread(template_path, cv2.IMREAD_COLOR)
+#     template_gray = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
+#     screen_gray = cv2.cvtColor(screen_image, cv2.COLOR_BGR2GRAY)
+#     result = cv2.matchTemplate(screen_gray, template_gray, cv2.TM_CCOEFF_NORMED)
+#     min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(result)
+#     if max_val >= threshold:
+#         h, w = template_gray.shape
+#         center_x = max_loc[0] + w / 2
+#         center_y = max_loc[1] + h / 2
+#         return center_x, center_y, max_val
+#     print(f"threshold lớn nhất la: {max_val}<{threshold}")
+#     return False

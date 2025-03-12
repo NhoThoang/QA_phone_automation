@@ -47,15 +47,11 @@ x_screen = int(x_screen)
 y_screen = int(y_screen)
 # qa.click_element(device=devices[0],connect=connect, value="Blood glucose")
 # a= qa.get_crop_image_by_text(device=devices[0], connect=connect, value="Blood glucose",output_path="./picture1.png")
-a= qa.scroll_find_images(device=devices[0], connect=connect, x_screen=x_screen,y_screen=y_screen,
-                         template_path="./picture1.png",click=True)
-# a= qa(device=devices[0],connect=connect,x_screen=x_screen, y_screen=y_screen,type_scroll="down", type_element="text",
-#     value="Heart rate", duration=800, click=True)
-
-# time.sleep(3)
-# qa.adb_click(device=devices[0],x=x,y=y)
-# import time
-# time.sleep(2)
-# qa.click_element(device=devices[0],connect=connect, type_element="text", value="Heart rate", wait_time=2)
-
+# a= qa.scroll_find_images(device=devices[0], connect=connect, x_screen=x_screen,y_screen=y_screen,
+#                          template_path="./picture1.png",click=True)
+# a= qa.scroll_up_and_dow_find_images(device=devices[0], connect=connect, x_screen=x_screen,y_screen=y_screen,
+#     template_path="./picture1.png",click=True)
+start = time.time()
+a= qa.find_button_by_image(connect=connect, template_path="./picture1.png", threshold=0.8,click=True)
+print(time.time()-start)
 print(a)
