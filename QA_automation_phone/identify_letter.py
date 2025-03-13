@@ -1,15 +1,20 @@
 import uiautomator2 as u2
 import pytesseract, time
 from typing import Literal
+from QA_automation_phone.identify_image import screenshot_to_cv2_gray, scroll_center_up_or_down, scroll_center_up_or_down_short
+import math
 language = Literal["eng", "vie"]
-from QA_automation_phone.identify_image import screenshot_to_cv2_gray, scroll_center_up_or_down
-
-def get_text_from_image(connect: u2.connect, lang: language="eng") -> str:
+def orc_get_text_from_image(connect: u2.connect, lang: language="eng") -> str:
     image = screenshot_to_cv2_gray(connect=connect)
     config = f'--oem 3 --psm 6 -l {lang}'
     all_text = pytesseract.image_to_string(image, config=config)
     return all_text
-def orc_find_text(connect: u2.connect, target_text: str, lang: language="eng", loop: int=1, click: bool=False) -> tuple:
+def orc_find_text(connect: u2.connect,
+    target_text: str,
+    lang: language="eng",
+    wait_time: int=2,
+    click: bool=False) -> tuple:
+    loop = math.ceil(wait_time/2)
     for _ in range(loop):
         image = screenshot_to_cv2_gray(connect)
         config = f'--oem 3 --psm 6 -l {lang}'
@@ -20,35 +25,41 @@ def orc_find_text(connect: u2.connect, target_text: str, lang: language="eng", l
                             text_data['width'][i], text_data['height'][i])
                 if click:
                     connect.click(x + w / 2, y + h / 2)
+                image=None
                 return x, y, w, h
         if loop > 1:
             time.sleep(0.5)
+    image=None
     return False
-
-def orc_scroll_up_or_down_find_text(connect: u2.connect, target_text: str, lang: language="eng",type_scroll: Literal["up", "down"]="up",\
-                                     loop: int=1,duration: int=500, click: bool=False) -> tuple:
+def orc_find_text(connect: u2.connect,
+    target_text: str,
+    lang: language="eng",
+    wait_time: int=2,
+    click: bool=False) -> tuple:
+    loop = math.ceil(wait_time/2)
     for _ in range(loop):
-        data= orc_find_text(connect=connect, target_text=target_text, lang=lang, loop=1)
-        if type_scroll == "up":
-            if data:
+        image = screenshot_to_cv2_gray(connect)
+        config = f'--oem 3 --psm 6 -l {lang}'
+        text_data = pytesseract.image_to_data(image, config=config, output_type=pytesseract.Output.DICT)
+        for i, text in enumerate(text_data['text']):
+            if target_text.lower() in text.lower():
+                x, y, w, h = (text_data['left'][i], text_data['top'][i], 
+                            text_data['width'][i], text_data['height'][i])
                 if click:
-                    connect.click(data[0]+data[2]/2, data[1]+data[3]/2)
-                return data
-            else:
-                scroll_center_up_or_down(connect=connect, x_screen=data[0], y_screen=data[1],type_scroll="up", duration=duration)   
-                time.sleep(1)
-        else:
-            if data:
-                if click:
-                    connect.click(data[0]+data[2]/2, data[1]+data[3]/2)
-                return data
-            else:
-                scroll_center_up_or_down(connect=connect, x_screen=data[0], y_screen=data[1],type_scroll="down", duration=duration)   
-                time.sleep(1)
+                    connect.click(x + w / 2, y + h / 2)
+                image=None
+                return x, y, w, h
+        if loop > 1:
+            time.sleep(0.5)
+    image=None
     return False
-
-
-def orc_find_text_with_index(connect: u2.connect, target_text: str, lang: language="eng", loop: int=1, index: int=0, click: bool=False) -> tuple:
+def orc_find_text_with_index(
+    connect: u2.connect,
+    target_text: str,
+    lang: language="eng",
+    loop: int=1,
+    index: int=0,
+    click: bool=False) -> tuple:
     for _ in range(loop):
         image = screenshot_to_cv2_gray(connect)
         config = f'--oem 3 --psm 6 -l {lang}'
@@ -67,6 +78,59 @@ def orc_find_text_with_index(connect: u2.connect, target_text: str, lang: langua
         if loop > 1:
             time.sleep(0.5)
     return False
+
+
+def orc_scroll_find_text(
+    device: str,
+    connect: u2.connect,
+    target_text: str,
+    x_screen: int, 
+    y_screen: int, 
+    lang: language="eng",
+    type_scroll: Literal["up", "down"]="up",
+    loop: int=1,
+    duration: int=500,
+    click: bool=False) -> tuple:
+    screen_small = y_screen//4
+    def fine_tune_scroll(y): 
+        if y < screen_small or y > screen_small*3:
+            print("fine tune scroll")
+            if y < screen_small:
+                scroll_center_up_or_down_short(device=device, x_screen=x_screen, y_screen=y_screen,type_scroll="down",duration=duration)
+            if y > screen_small*3:
+                scroll_center_up_or_down_short(device=device, x_screen=x_screen, y_screen=y_screen,type_scroll="up",duration=duration)
+            time.sleep(1)
+            return orc_find_text(connect=connect, target_text=target_text, lang=lang)    
+        return False
+    for _ in range(loop):
+        data= orc_find_text(connect=connect, target_text=target_text, lang=lang)
+        if data:
+            y = data[1]
+            data_fine_tune = fine_tune_scroll(y)
+            if data_fine_tune:
+                if click:
+                    connect.click(data_fine_tune[0]+data_fine_tune[2]/2, data_fine_tune[1]+data_fine_tune[3]/2)
+                return data_fine_tune
+            if click:
+                connect.click(data[0]+data[2]/2, data[1]+data[3]/2)
+            return data
+        if type_scroll == "up":
+            scroll_center_up_or_down(connect=connect, x_screen=data[0], y_screen=data[1],type_scroll="up", duration=duration)   
+            time.sleep(1)
+            new_data = orc_find_text(connect=connect, target_text=target_text, lang=lang)
+            if new_data:
+        else:
+            if data:
+                if click:
+                    connect.click(data[0]+data[2]/2, data[1]+data[3]/2)
+                return data
+            else:
+                scroll_center_up_or_down(connect=connect, x_screen=data[0], y_screen=data[1],type_scroll="down", duration=duration)   
+                time.sleep(1)
+    return False
+
+
+
 
 def orc_scroll_up_or_down_find_text_with_index(connect: u2.connect,device: str,x_screen: int, y_screen: int,duration: \
                                                int=500,type_scroll: Literal["up", "down"]="up", target_text: str="",\

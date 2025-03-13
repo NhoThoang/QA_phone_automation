@@ -57,7 +57,9 @@ def get_bounds(
         convert = ET.fromstring(xml)
         elements = [element for element in convert.iter() if value in element.attrib.get(type_element,"")]
         if elements:
+            xml = None
             return elements[index].attrib.get('bounds','')
+    xml = None
     return None
 def center_point_bounds(
     connect: u2.connect, 
@@ -81,7 +83,9 @@ def center_point_bounds_with_xml(
         if elements:
             bounds = elements[index].attrib.get('bounds','')
             xy = eval(bounds.replace("][",","))
+            xml = None
             return (xy[0]+xy[2])//2, (xy[1]+xy[3])//2
+    xml = None
     return None
 def click_element(
     device: str, 
@@ -109,7 +113,9 @@ def click_element_when_xml_contains(
             xy = eval(bounds.replace("][",","))
             x, y = (xy[0]+xy[2])//2, (xy[1]+xy[3])//2
             adb_click(device, x, y)
+            xml = None
             return x, y
+    xml = None
     return None
     
 def tab_and_send_text_to_element(
@@ -136,8 +142,11 @@ def get_bounds_all_element(
         convert = ET.fromstring(xml)
         elements = [element for element in convert.iter() if value in element.attrib.get(type_element,"")]
         if elements:
+            xml = None
             return [element.attrib.get('bounds','') for element in elements]
         print(f"Not found element {type_element}: {value}")
+    xml = None
+    return None
 
 def scroll_find_element(
     device: str, 
@@ -171,15 +180,18 @@ def scroll_find_element(
             if data_fine_tune:
                 if click:
                     adb_click(device, data_fine_tune[0], data_fine_tune[1])
+                xml = None
                 return data_fine_tune
             if click:
                 adb_click(device, x, y)
+            xml = None
             return data
         if type_scroll == "up":
             scroll_center_up_or_down(device=device, x_screen=x_screen, y_screen=y_screen,type_scroll="up",duration=duration)
             time.sleep(1)
             new_xml = get_xml_content_uiautomator2(connect)
             if new_xml == xml:
+                xml = None; new_xml = None
                 return False
             xml = new_xml
         else:
@@ -187,6 +199,7 @@ def scroll_find_element(
             time.sleep(1)
             new_xml = get_xml_content_uiautomator2(connect)
             if new_xml == xml:
+                xml = None; new_xml = None
                 return False
             xml = new_xml
     return False
