@@ -188,20 +188,14 @@ def scroll_find_element(
             return data
         if type_scroll == "up":
             scroll_center_up_or_down(device=device, x_screen=x_screen, y_screen=y_screen,type_scroll="up",duration=duration)
-            time.sleep(1)
-            new_xml = get_xml_content_uiautomator2(connect)
-            if new_xml == xml:
-                xml = None; new_xml = None
-                return False
-            xml = new_xml
         else:
             scroll_center_up_or_down(device=device, x_screen=x_screen, y_screen=y_screen, type_scroll="down",duration=duration)
-            time.sleep(1)
-            new_xml = get_xml_content_uiautomator2(connect)
-            if new_xml == xml:
-                xml = None; new_xml = None
-                return False
-            xml = new_xml
+        time.sleep(1)
+        new_xml = get_xml_content_uiautomator2(connect)
+        if new_xml == xml:
+            xml = None; new_xml = None
+            return False
+        xml = new_xml
     return False
 
 def scroll_up_and_down_find_element(
@@ -239,6 +233,7 @@ def scroll_up_and_down_find_element(
         type_scroll="down")
     if data:
         return data
+    return False
     
  
 

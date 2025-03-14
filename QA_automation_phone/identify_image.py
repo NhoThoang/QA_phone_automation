@@ -131,21 +131,15 @@ def scroll_find_images(
             return data
         if type_scroll == "up":
             scroll_center_up_or_down(device=device, x_screen=x_screen, y_screen=y_screen,type_scroll="up", duration=duration)
-            time.sleep(1)
-            new_image = screenshot_to_cv2_gray(connect=connect)
-            if compare_images(img1=image_screen, img2=new_image):
-                return False   
-            image_screen = new_image
-            # if comare 2 image 
         else:
             scroll_center_up_or_down(device=device, x_screen=x_screen, y_screen=y_screen,type_scroll="down", duration=duration)
-            time.sleep(1)
-            new_image = screenshot_to_cv2_gray(connect=connect)
-            if compare_images(img1=image_screen, img2=new_image):
-                return False
-            image_screen = new_image
-            # compare 2 image 
-
+        time.sleep(1)
+        new_image = screenshot_to_cv2_gray(connect=connect)
+        if compare_images(img1=image_screen, img2=new_image):
+            image_screen = None
+            new_image = None
+            return False   
+        image_screen = new_image
     print(f"not find {template_path} threshold lớn nhất la: {data[2]}<{threshold}")
     return False
 
@@ -185,3 +179,4 @@ def scroll_up_and_dow_find_images(
         click=click)
     if data:
         return data
+    return False

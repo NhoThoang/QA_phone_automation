@@ -33,10 +33,14 @@ def check_youtobe(connect:u2.connect, device_id:str):
 def run(device_id, x_screen, y_screen):
     print("start")
     connect = u2.connect(device_id)
+    # connect.send_keys("hello", clear=Truconnect= u2.connect(device_id)e)
 
     if qa.open_app(device=device_id, package="com.sec.android.app.shealth"):
         print("Opened")
-
+    # else:
+    #     print("Not opened")
+    # time.sleep(3)
+    # vuốt mạnh quá nên nó chôi đi dẫn đênc click vào rồi xong lại backra
     open_card_health(connect=connect, device_id=device_id,x_screen=x_screen, y_screen=y_screen, value="Steps",index=1 )
     time.sleep(2)
     open_card_health(connect=connect, device_id=device_id,x_screen=x_screen, y_screen=y_screen,  value="Daily")
