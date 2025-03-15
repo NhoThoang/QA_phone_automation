@@ -1,8 +1,8 @@
-# Qa automation phone get screen by UI, screen short
+# Qa automation phone get screen by UI, screen short:
 
-## Mục đích
+## Mục đích:
 Dự án này kết nối từ laptop tới server trên điện thoại Android, thực hiện dump màn hình và trả dữ liệu về laptop hoặc lấy màn hình điện thoại về nhận diện   vị trí của text, button.
-## Sơ đồ
+## Sơ đồ:
 ```bash
 
                  ┌──────────────┐
@@ -48,16 +48,16 @@ Dự án này kết nối từ laptop tới server trên điện thoại Android
 
 - **Laptop:** Gửi yêu cầu dump màn hình qua điệnh thoại.
 - **Điện thoại (Server trên điện thoại):** Nhận yêu cầu, thực hiện dump màn hình và gửi kết quả về laptop.
-## code được viết dựa trên thư viện Uiautomator2 mình dùng function dump_hierarchy để lấy ui về xử lý 
-các bạn có thể tha khảo link của thư viện U2 ở đây: ![link u2](https://github.com/openatx/uiautomator2)
-## Cài đặt
-1. Cài đặt `Qa-automation-phone` trên laptop:
+#### Thư viện được build dựa trên thư viện Uiautomator2 mình dùng function dump_hierarchy để lấy ui về xử lý 
+các bạn có thể tha khảo link của thư viện U2 ở đây: ![thu viện u2](https://github.com/openatx/uiautomator2)
+## Cài đặt thư viện:
+1. Cài đặt `Qa-automation-phone` trên PC:
 ```bash
 pip install QA-automation-phone
 ```
-## tiến hành chạy thử trên phone
-### test tốc độ click trên model cũ 
-#### để màn hình điện thoại có Button Settings để test
+## Tiến hành chạy thử trên phone:
+### Test tốc độ click trên model cũ 
+❌ lưu ý để màn hình điện thoại có Button Settings để test
 ```python
 import time
 import QA_automation_phone as qa
@@ -66,7 +66,7 @@ start = time.time()
 connect.connect(text="Settings").click()
 print(time.time() - start)
 ```
-### test tốc độ click trên model mới 
+### Test tốc độ click trên model mới: 
 ```python
 import time
 import QA_automation_phone as qa
@@ -76,7 +76,7 @@ connect.click_element(value="Settings")
 print(time.time() - start)
 ```
 model mới được tối ưu hơn chạy nhanh hơn 1 chút 
-## Lấy text, content cần chạy 1 server 
+## Lấy text, content cần chạy 1 server: 
 cần cài đặt 1 websever để lấy màn hình điện thoại 
 ```bash
 pip install -U webitor
@@ -87,9 +87,8 @@ python -m weditor
 ```
 ![giao diện weditor](https://github.com/NhoThoang/QA_phone_automation/blob/main/picture/weditor.png)
 
-## Cách sử dụng chạy thử với đa luông 
+## Cách sử dụng chạy thử với đa luông: 
 ```python
-
 import time
 import QA_automation_phone as qa
 import threading
@@ -146,8 +145,8 @@ for device_id in devicess:
 for thread in threads:
     thread.start()
 ```
-## Thao tác với orc
-Hiện tại orc chỉ click vào được một từ đơn nếu giữa text có dấu cách thì sẽ không cick được.
+## Thao tác với orc:
+Hiện tại orc chỉ click vào được một từ đơn nếu giữa text có dấu cách thì sẽ không cick được.  
 VD:
 ```python
 import QA_automation_phone as qa
@@ -166,7 +165,7 @@ cn = qa.connect(devices[0])
 a= cn.orc_find_text(target_text="Samsung Health", lang="eng", index=1,click=True)
 print(a)
 ```
-### các hàm hay dùng trong orc 
+### các hàm hay dùng trong orc: 
 ```python
 import QA_automation_phone as qa
 devices = qa.get_devices()
