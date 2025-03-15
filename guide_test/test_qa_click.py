@@ -1,21 +1,19 @@
 
-from QA_automation_phone import coreapp, devices
-from QA_automation_phone.coreapp import u2
-import time
-import threading
-devicess = devices.get_devices()
-def run(device_id):
-    print("start")
-    connect= u2.connect(device_id)
+
+import QA_automation_phone as qa
+import time, threading  
+devices = qa.get_devices()
+def run(device):
+    connect = qa.connect(device=device)
     start = time.time()
-    if coreapp.click_element(device_id,connect, "text", "Settings", 0, 2):
+    if connect.click_element(value="Settings"):
         print("Clicked")
     else: 
         print("Not clicked")
     print(time.time()-start)
 
 threads = []
-for device in devicess:
+for device in devices:
     t = threading.Thread(target=run, args=(device,))
     threads.append(t)
 for thread in threads:

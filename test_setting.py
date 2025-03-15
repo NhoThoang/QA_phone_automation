@@ -1,102 +1,56 @@
-# # from QA_automation_phone import u2
-# # import time
-# # import QA_automation_phone as qa
 
-# # from typing import Literal
-# # import threading
-# # devicess = qa.get_devices()
-# # device = devicess[0]
-# # screen_size = qa.get_screen_size(devicess[0])
-# # x_screen = int(screen_size[0])
-# # y_screen = int(screen_size[1])
-# # connect= u2.connect(devicess[0])
-
-# # time1 = time.time()
-# # qa.click_element(device=device, connect=connect, type="content-desc", value="Settings", wait_time=2)
-# # print("time to click by qa:", time.time() - time1)
-# # # time.sleep(2)
-# # # qa.press_back(device=device)
-# # # time.sleep(3)
-# # # time2 = time.time()
-# # # connect(text="Settings").click()
-# # # print("time to click by u2:", time.time() - time2)
-
-# # # time3 = time.time()
-# # # qa.screen_shot(device=device, output="screenshot.png")
-# # # print("time to screenshot by qa:", time.time() - time3)
-# # # time.sleep(3)
-# # # time4 = time.time()
-# # # connect.screenshot("screenshot.png")
-# # # print("time to screenshot by u2:", time.time() - time4)
-
-# # import uiautomator2 as u2
-
-# # # Kết nối tới thiết bị
-# # device = u2.connect('R58NC2W4ZQK')
-
-# # # Cuộn để tìm và click vào nút có text là "Samsung Health"
-# # device(scrollable=True).scroll.to(text="Blood pressure3")
-# # device(text="Blood pressure3").click()
-# import QA_automation_phone as qa
-# import time
-# from QA_automation_phone import u2
-# import threading
-# devices = qa.get_devices()
-# # print(devices)
-# # connect = u2.connect(devices[0])
-# x_screen, y_screen = qa.get_screen_size(devices[0])
-# x_screen = int(x_screen)
-# y_screen = int(y_screen)
-
-# # start = time.time()
-# # # a= qa.orc_find_text(connect=connect, target_text="Samsung", lang="eng",index=1,click=True)
-# # print(time.time()-start)
-# # a =qa.orc_scroll_find_text(device=devices[0], connect=connect, x_screen=x_screen, y_screen=y_screen,target_text="Blood", lang="eng",index=1,click=True)
-# def run(device_id):
-#     connect = u2.connect(device_id)
-#     a =qa.orc_scroll_up_and_dow_find_text(device=device_id, connect=connect, x_screen=x_screen,
-#                                            y_screen=y_screen,target_text="Blood", lang="eng",index=1,click=True)
-#     print(a)
-# threads = []
-# for device in devices:
-#     t = threading.Thread(target=run, args=(device,))
-#     threads.append(t)
-# for thread in threads:
-#     thread.start()
-# import qa_automation_phone as qa
-
+import time
 import QA_automation_phone as qa
 import threading
-connect = qa.connect()
-# devicess = qa.get_devices()
-# def run(device):
-#     connect = qa.connect(device=device)
-#     connect.scroll_find_element(value="Blood glucose", click=True)
-# threads = []
-# for device in devicess:
-#     t = threading.Thread(target=run, args=(device,))
-#     threads.append(t)
-# for thread in threads:
-#     thread.start()
-# connect.click_element(value="Samsung Health")
-# connect.scroll_find_element(value="Blood pressure", click=True)
-# x,y = connect.scroll_up_and_down_find_element(value="Blood glucose")
-# connect.adb_click(x,y)
-# connect.scroll_find_images(template_path="picture1.png", click=True)
-# ab = connect.scroll_up_and_dow_find_images(template_path="picture1.png")
-# connect.adb_click(ab[0],ab[1])
-# import time
-# # start = time.time()
-# # connect.connect(text="Blood glucose").click()
-# # print(time.time() - start)
-# start = time.time() 
-# connect.show()
-# print(time.time() - start)
+devicess = qa.get_devices()
 
-# connect.orc_find_text(target_text="Blood glucose", lang="eng",index=1,click=True)
+def open_card_health(connect, index: int = 0, type_element: str="content-desc", value: str=""):
+    if not connect.wait_for_element(value="Home", wait_time=2):
+        connect.open_app(package="com.sec.android.app.shealth")
+        time.sleep(2)
+    a = connect.scroll_up_and_down_find_element(value=value, type_element=type_element,index=index, duration=800, click=True)
+    if a:
+        time.sleep(2)
+        if connect.wait_for_element(value=value, wait_time=2):
+            time.sleep(2)
+            connect.press_back()
+            return True
 
-# connect = qa.connect()
-# a = connect.orc_find_text(target_text="Blood", lang="eng",index=0,click=True)
-a= connect.orc_scroll_find_text(target_text="Blood", lang="eng",index=0,click=True)
-# a= connect.orc_scroll_up_and_dow_find_text(target_text="Blood", lang="eng",index=0,click=True)
-print(a)
+def check_youtobe(connect):
+    connect.click_element(type_element="content-desc", value="Search")
+    time.sleep(2)
+    if  connect.adb_send(content="Bac Bling"):
+        print("input done")
+    else:
+        print("input fail")
+    connect.press_enter()
+    time.sleep(2)
+
+def run(device_id):
+    print("start")
+    connect = qa.connect(device=device_id)
+
+    if connect.open_app(package="com.sec.android.app.shealth"):
+        print("Opened")
+
+    open_card_health(connect=connect,value="Steps",index=1 )
+    time.sleep(2)
+    open_card_health(connect=connect,value="Daily")
+    time.sleep(2)
+    open_card_health(connect=connect,value="Sleep")
+    time.sleep(2)
+    open_card_health(connect=connect,value="Food")
+    time.sleep(2)
+    open_card_health(connect=connect,value="Water")
+    connect.close_app(package="com.sec.android.app.shealth")
+    time.sleep(3)
+    # open tiktok app
+    connect.open_app(package="com.google.android.youtube")
+    time.sleep(3)
+    check_youtobe(connect=connect)
+threads = []
+for device_id in devicess:
+    thread = threading.Thread(target=run, args=(device_id,))
+    threads.append(thread)
+for thread in threads:
+    thread.start()
