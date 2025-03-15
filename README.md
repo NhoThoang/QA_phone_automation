@@ -48,7 +48,8 @@ Dự án này kết nối từ laptop tới server trên điện thoại Android
 
 - **Laptop:** Gửi yêu cầu dump màn hình qua điệnh thoại.
 - **Điện thoại (Server trên điện thoại):** Nhận yêu cầu, thực hiện dump màn hình và gửi kết quả về laptop.
-
+## code được viết dựa trên thư viện Uiautomator2 mình dùng function dump_hierarchy để lấy ui về xử lý 
+các bạn có thể tha khảo link của thư viện U2 ở đây: ![link u2](https://github.com/openatx/uiautomator2)
 ## Cài đặt
 1. Cài đặt `Qa-automation-phone` trên laptop:
 ```bash
@@ -56,12 +57,13 @@ pip install QA-automation-phone
 ```
 ## tiến hành chạy thử trên phone
 ### test tốc độ click trên model cũ 
+#### để màn hình điện thoại có Button Settings để test
 ```python
 import time
 import QA_automation_phone as qa
 connect = qa.connect()
 start = time.time()
-connect.connect(text="Blood glucose").click()
+connect.connect(text="Settings").click()
 print(time.time() - start)
 ```
 ### test tốc độ click trên model mới 
@@ -70,11 +72,11 @@ import time
 import QA_automation_phone as qa
 connect = qa.connect()
 start = time.time()
-connect.click_element(value="Blood glucose")
+connect.click_element(value="Settings")
 print(time.time() - start)
 ```
 model mới được tối ưu hơn chạy nhanh hơn 1 chút 
-## lấy text, content cần chạy 1 server 
+## Lấy text, content cần chạy 1 server 
 cần cài đặt 1 websever để lấy màn hình điện thoại 
 ```bash
 pip install -U webitor
@@ -87,69 +89,127 @@ python -m weditor
 
 ## Cách sử dụng chạy thử với đa luông 
 ```python
-from QA_automation_phone import u2
+
 import time
 import QA_automation_phone as qa
-
-from typing import Literal
 import threading
 devicess = qa.get_devices()
-screen_size = qa.get_screen_size(devicess[0])
-x_screen = int(screen_size[0])
-y_screen = int(screen_size[1])
-def open_card_health(connect:u2.connect, device_id:str, x_screen: int, y_screen: int, index: int = 0, type_element: str="content-desc", value: str=""):
-    if not qa.wait_for_element(connect=connect, value="Home", wait_time=2):
-        qa.open_app(device=device_id, package="com.sec.android.app.shealth")
-        time.sleep(2)
-    a = qa.scroll_up_and_down_find_element(connect=connect,device=device_id, x_screen=x_screen, y_screen=y_screen, value=value, type_element=type_element,index=index, duration=800, click=True)
-    if a:
-        # print(f"click done{a}")
-        time.sleep(2)
-        qa.press_back(device=device_id)
-        return True
 
-def check_youtobe(connect:u2.connect, device_id:str):
-    qa.click_element(device=device_id, connect=connect, type_element="content-desc", value="Search")
+def open_card_health(connect, index: int = 0, type_element: str="content-desc", value: str=""):
+    if not connect.wait_for_element(value="Home", wait_time=2):
+        connect.open_app(package="com.sec.android.app.shealth")
+        time.sleep(2)
+    a = connect.scroll_up_and_down_find_element(value=value, type_element=type_element,index=index, duration=800, click=True)
+    if a:
+        time.sleep(2)
+        if connect.wait_for_element(value=value, wait_time=2):
+            time.sleep(2)
+            connect.press_back()
+            return True
+
+def check_youtobe(connect):
+    connect.click_element(type_element="content-desc", value="Search")
     time.sleep(2)
-    if qa.adb_send(device=device_id, content="Bac Bling"):
+    if  connect.adb_send(content="Bac Bling"):
         print("input done")
     else:
         print("input fail")
-    qa.press_enter(device=device_id)
+    connect.press_enter()
     time.sleep(2)
 
-def run(device_id, x_screen, y_screen):
+def run(device_id):
     print("start")
-    connect = u2.connect(device_id)
+    connect = qa.connect(device=device_id)
 
-    if qa.open_app(device=device_id, package="com.sec.android.app.shealth"):
+    if connect.open_app(package="com.sec.android.app.shealth"):
         print("Opened")
 
-    open_card_health(connect=connect, device_id=device_id,x_screen=x_screen, y_screen=y_screen, value="Steps",index=1 )
+    open_card_health(connect=connect,value="Steps",index=1 )
     time.sleep(2)
-    open_card_health(connect=connect, device_id=device_id,x_screen=x_screen, y_screen=y_screen,  value="Daily")
+    open_card_health(connect=connect,value="Daily")
     time.sleep(2)
-    open_card_health(connect=connect, device_id=device_id,x_screen=x_screen, y_screen=y_screen,value="Sleep")
+    open_card_health(connect=connect,value="Sleep")
     time.sleep(2)
-    open_card_health(connect=connect, device_id=device_id,x_screen=x_screen, y_screen=y_screen, value="Food")
+    open_card_health(connect=connect,value="Food")
     time.sleep(2)
-    open_card_health(connect=connect, device_id=device_id,x_screen=x_screen, y_screen=y_screen, value="Water")
-    qa.close_app(device=device_id, package="com.sec.android.app.shealth")
+    open_card_health(connect=connect,value="Water")
+    connect.close_app(package="com.sec.android.app.shealth")
     time.sleep(3)
     # open tiktok app
-    qa.open_app(device=device_id, package="com.google.android.youtube")
+    connect.open_app(package="com.google.android.youtube")
     time.sleep(3)
-    check_youtobe(connect=connect, device_id=device_id)
+    check_youtobe(connect=connect)
 threads = []
 for device_id in devicess:
-    thread = threading.Thread(target=run, args=(device_id, x_screen, y_screen))
+    thread = threading.Thread(target=run, args=(device_id,))
     threads.append(thread)
 for thread in threads:
-    thread.start()()
+    thread.start()
 ```
 ## Thao tác với orc
-## Thao toác với ảnh
-## Lưu ý
+Hiện tại orc chỉ click vào được một từ đơn nếu giữa text có dấu cách thì sẽ không cick được.
+VD:
+```python
+import QA_automation_phone as qa
+devices = qa.get_devices()
+cn = qa.connect(devices[0])
+a= cn.orc_find_text(target_text="Samsung", lang="eng", index=1,click=True)
+print(a)
+```
+code trên sẽ tìm chữ Samsung ở trên màn hình với lần xuất hiện là thứ 2 nếu target_text="Samsung Health" thì thư viên chưa hỗ trợ miinhf sẽ update sau 
+
+❌ Code này sẽ không tìm được text là **Samsung Health**.
+```python
+import QA_automation_phone as qa
+devices = qa.get_devices()
+cn = qa.connect(devices[0])
+a= cn.orc_find_text(target_text="Samsung Health", lang="eng", index=1,click=True)
+print(a)
+```
+### các hàm hay dùng trong orc 
+```python
+import QA_automation_phone as qa
+devices = qa.get_devices()
+cn = qa.connect(devices[0])
+a= cn.orc_find_text(target_text="Samsung", lang="eng", index=1,click=True)
+cn.orc_find_text(target_text="Settings", lang="eng", index=1,click=True)
+cn.orc_scroll_find_text(target_text="Heart rate", click=True)
+cn.orc_scroll_up_and_dow_find_text(target_text="Heart rate", click=True)
+print(a)
+```
+
+## Thao toác với ảnh:
+để thao tác với ảnh các bạn cần có môt ảnh cùng kích thước để so sánh thi viện của mình sẽ chuyển hết chúng về đén trắng để so sánh.
+để lấy ảnh mẫy từ màn hình cách bạn chạy hàm dưới đây:
+```python
+import QA_automation_phone as qa
+import time, threading
+devices = qa.get_devices()
+connect = qa.connect(device=devices[0])
+connect.get_crop_image(x1=795, y1=1564, width=200, height=300, output_path="./picture1.png")
+```
+x, y là tọa độ điểm đầy phái trên bên trái của button
+width, height là độ rộng và cao của button 
+sau khi chạy xong check ảnh picture1.png xem đúng chưa.
+### tiến hành chạy thử nhận diện tìm kiếm vị trí của anh:
+```python
+import QA_automation_phone as qa
+import time, threading
+devices = qa.get_devices()
+connect = qa.connect(device=devices[0])
+connect.find_button_by_image(template_path="./picture1.png", threshold=0.8,click=True)
+```
+#### các hàm hay dùng trong tìm kiếm vị trí của ảnh để click:
+```python
+import QA_automation_phone as qa
+import time, threading
+devices = qa.get_devices()
+connect = qa.connect(device=devices[0])
+connect.find_button_by_image(template_path="./picture1.png", threshold=0.8,click=True)
+connect.scroll_find_images(template_path="./picture1.png",type_scroll="up",click=True)
+connect.scroll_up_and_dow_find_images(template_path="./picture1.png",click=True)
+```
+## Lưu ý:
 - Điện thoại cần bật chế độ nhà phát triển và cấp quyền ADB.
 - Đảm bảo server đang chạy trên điện thoại.
 ---
