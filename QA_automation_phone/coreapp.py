@@ -1,19 +1,17 @@
-# from QA_automation_phone.config import (Literal, run_command_text, scroll_height, adb_click, adb_click_send,run_command,
-#                                         scroll_center_up_or_down, scroll_top_or_bottom_short,scroll_center_up_or_down_short)
 from QA_automation_phone.config import config, u2, Literal
 import xml.etree.ElementTree as ET
 import time, math
 ElementType = Literal["text", "content-desc", "resource-id"]
-class coreapp:
+class coreapp(config):
     def __init__(self,device: str = None, connect: u2.connect = None, x_screen: int = None, y_screen: int = None) -> None:
-        self.config = config(device=device, connect=connect, x_screen=x_screen, y_screen=y_screen)
+        super().__init__(device=device, connect=connect, x_screen=x_screen, y_screen=y_screen)
         self.device = device
         self.connect = connect
         self.x_screen = x_screen
         self.y_screen = y_screen
     def get_xml_content(self)->str:
         command = f"adb -s {self.device} exec-out uiautomator dump /dev/stdout"
-        result = self.config.run_command_text(command)
+        result = self.run_command_text(command)
         if result['returncode'] == 0:
             return result['stdout'].replace('UI hierchary dumped to: /dev/stdout', "")  
         else:
@@ -102,13 +100,12 @@ class coreapp:
         wait_time: int = 2) -> tuple:
         xy = self.center_point_bounds(value=value, type_element=type_element, index=index,wait_time=wait_time)
         if xy:
-            self.config.adb_click(xy[0], xy[1])
+            self.adb_click(xy[0], xy[1])
             return xy
         return None
     def click_element_when_xml_contains(
         self,
         xml: str,
-        device: str,  
         value: str = "", 
         type_element: ElementType = "text", 
         index: int = 0,) -> tuple:
@@ -119,7 +116,7 @@ class coreapp:
                 bounds = elements[index].attrib.get('bounds','')
                 xy = eval(bounds.replace("][",","))
                 x, y = (xy[0]+xy[2])//2, (xy[1]+xy[3])//2
-                self.config.adb_click(device, x, y)
+                self.adb_click(self.device, x, y)
                 xml = None
                 return x, y
         xml = None
@@ -134,7 +131,7 @@ class coreapp:
         content: str = "") -> tuple:
         xy = self.center_point_bounds(value, type_element, index, wait_time)
         if xy:
-            self.config.adb_click_send(xy[0], xy[1],content)
+            self.adb_click_send(xy[0], xy[1],content)
             return xy
         return None
 
@@ -167,9 +164,9 @@ class coreapp:
         def fine_tune_scroll(y): 
             if y < screen_small or y > screen_small*3:
                 if y < screen_small:
-                    self.config.scroll_center_up_or_down_short(type_scroll="down",duration=duration)
+                    self.scroll_center_up_or_down_short(type_scroll="down",duration=duration)
                 if y > screen_small*3:
-                    self.config.scroll_center_up_or_down_short(type_scroll="up",duration=duration)
+                    self.scroll_center_up_or_down_short(type_scroll="up",duration=duration)
                 time.sleep(1)
                 return self.center_point_bounds(value=value, type_element=type_element, index=index, wait_time=2)
             return False
@@ -181,17 +178,17 @@ class coreapp:
                 data_fine_tune = fine_tune_scroll(y)
                 if data_fine_tune:
                     if click:
-                        self.config.adb_click(data_fine_tune[0], data_fine_tune[1])
+                        self.adb_click(data_fine_tune[0], data_fine_tune[1])
                     xml = None
                     return data_fine_tune
                 if click:
-                    self.config.adb_click(x, y)
+                    self.adb_click(x, y)
                 xml = None
                 return data
             if type_scroll == "up":
-                self.config.scroll_center_up_or_down(type_scroll="up",duration=duration)
+                self.scroll_center_up_or_down(type_scroll="up",duration=duration)
             else:
-                self.config.scroll_center_up_or_down(type_scroll="down",duration=duration)
+                self.scroll_center_up_or_down(type_scroll="down",duration=duration)
             time.sleep(1)
             new_xml = self.get_xml_content_uiautomator2()
             if new_xml == xml:
@@ -225,9 +222,9 @@ class coreapp:
         if data:
             return data
         return False
-    def get_package(self, device: str)->str:
-        command = f"adb -s {device} shell pm list packages"
-        list_package = self.config.run_command_text(command=command)
+    def get_package(self)->str:
+        command = f"adb -s {self.device} shell pm list packages"
+        list_package = self.run_command_text(command=command)
         if list_package["returncode"] == 0:
             return list_package["stdout"]    
 

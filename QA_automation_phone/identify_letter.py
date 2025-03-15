@@ -1,20 +1,17 @@
 import uiautomator2 as u2
-import pytesseract, time
-from typing import Literal
-from QA_automation_phone.identify_image import identify_image, config
+import pytesseract
+from QA_automation_phone.identify_image import identify_image, math, Literal, time
 # screenshot_to_cv2_gray, scroll_center_up_or_down, scroll_center_up_or_down_short, compare_images
-import math
 language = Literal["eng", "vie"]
-class identify_letter:
+class identify_letter(identify_image):
     def __init__(self,device: str = None, connect: u2.connect = None, x_screen: int = None, y_screen: int = None) -> None:
-        self.identify_image = identify_image(device=device, connect=connect, x_screen=x_screen, y_screen=y_screen)
-        self.config = config(device=device, connect=connect, x_screen=x_screen, y_screen=y_screen)
+        super().__init__(device=device, connect=connect, x_screen=x_screen, y_screen=y_screen)
         self.device = device
         self.connect = connect
         self.x_screen = x_screen
         self.y_screen = y_screen
     def orc_get_text_from_image(self, lang: language="eng") -> str:
-        image = self.identify_image.screenshot_to_cv2_gray(connect=self.connect)
+        image = self.screenshot_to_cv2_gray(connect=self.connect)
         config = f'--oem 3 --psm 6 -l {lang}'
         all_text = pytesseract.image_to_string(image, config=config)
         return all_text
@@ -50,7 +47,7 @@ class identify_letter:
         click: bool=False) -> tuple:
         loop = math.ceil(wait_time/2)
         for _ in range(loop):
-            image = self.identify_image.screenshot_to_cv2_gray()
+            image = self.screenshot_to_cv2_gray()
             config = f'--oem 3 --psm 6 -l {lang}'
             text_data = pytesseract.image_to_data(image, config=config, output_type=pytesseract.Output.DICT)
             count = 0
@@ -82,16 +79,16 @@ class identify_letter:
         def fine_tune_scroll(y): 
             if y < screen_small or y > screen_small*3:
                 if y < screen_small:
-                    self.config.scroll_center_up_or_down_short(type_scroll="down",duration=duration)
+                    self.scroll_center_up_or_down_short(type_scroll="down",duration=duration)
                 if y > screen_small*3:
-                    self.config.scroll_center_up_or_down_short(type_scroll="up",duration=duration)
+                    self.scroll_center_up_or_down_short(type_scroll="up",duration=duration)
                 time.sleep(1)
                 return self.orc_find_text(target_text=target_text, index=index, lang=lang)    
             return False
-        screen_short = self.identify_image.screenshot_to_cv2_gray()
+        screen_short = self.screenshot_to_cv2_gray()
         loop = math.ceil(max_loop/2)
         for _ in range(loop):
-            data= self.orc_find_text_with_image(connect=self.connect, target_text=target_text, screen_shot=screen_short,index=index,lang=lang)
+            data= self.orc_find_text_with_image(target_text=target_text, screen_shot=screen_short,index=index,lang=lang)
             if data:
                 y = data[1]
                 data_fine_tune = fine_tune_scroll(y)
@@ -103,12 +100,12 @@ class identify_letter:
                     self.connect.click(data[0]+data[2]/2, data[1]+data[3]/2)
                 return data
             if type_scroll == "up":
-                self.config.scroll_center_up_or_down(type_scroll="up", duration=duration)                
+                self.scroll_center_up_or_down(type_scroll="up", duration=duration)                
             else:
-                self.config.scroll_center_up_or_down(type_scroll="down", duration=duration)   
+                self.scroll_center_up_or_down(type_scroll="down", duration=duration)   
             time.sleep(1)
-            new_screen = self.identify_image.screenshot_to_cv2_gray()
-            if self.identify_image.compare_images(img1=screen_short, img2=new_screen):
+            new_screen = self.screenshot_to_cv2_gray()
+            if self.compare_images(img1=screen_short, img2=new_screen):
                 new_screen=None
                 screen_short=None
                 return False 

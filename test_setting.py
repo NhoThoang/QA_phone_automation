@@ -67,6 +67,7 @@
 
 import QA_automation_phone as qa
 import threading
+connect = qa.connect()
 # devicess = qa.get_devices()
 # def run(device):
 #     connect = qa.connect(device=device)
@@ -82,16 +83,20 @@ import threading
 # x,y = connect.scroll_up_and_down_find_element(value="Blood glucose")
 # connect.adb_click(x,y)
 # connect.scroll_find_images(template_path="picture1.png", click=True)
-# connect.scroll_up_and_dow_find_images(template_path="picture1.png", click=True)
+# ab = connect.scroll_up_and_dow_find_images(template_path="picture1.png")
+# connect.adb_click(ab[0],ab[1])
 # import time
 # # start = time.time()
 # # connect.connect(text="Blood glucose").click()
 # # print(time.time() - start)
-# start = time.time()
+# start = time.time() 
 # connect.show()
 # print(time.time() - start)
 
 # connect.orc_find_text(target_text="Blood glucose", lang="eng",index=1,click=True)
 
-connect = qa.connect()
-connect.orc_find_text(target_text="Blood glucose", lang="eng",index=1,click=True)
+# connect = qa.connect()
+# a = connect.orc_find_text(target_text="Blood", lang="eng",index=0,click=True)
+a= connect.orc_scroll_find_text(target_text="Blood", lang="eng",index=0,click=True)
+# a= connect.orc_scroll_up_and_dow_find_text(target_text="Blood", lang="eng",index=0,click=True)
+print(a)

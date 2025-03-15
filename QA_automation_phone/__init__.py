@@ -1,7 +1,7 @@
 from QA_automation_phone.config import config
-from QA_automation_phone.coreapp import coreapp, u2
-from QA_automation_phone.identify_letter import identify_letter
-from QA_automation_phone.identify_image import identify_image
+# from QA_automation_phone.coreapp import coreapp, u2
+from QA_automation_phone.identify_letter import identify_letter, u2
+# from QA_automation_phone.identify_image import identify_image
 from QA_automation_phone.keyevent import keyevent
 from QA_automation_phone.setting import setting
 from QA_automation_phone.script import script
@@ -28,7 +28,7 @@ def get_model(devices: list)->list:
         if result['returncode'] == 0:
             models.append(result['stdout'])
     return models
-class connect(coreapp, identify_letter, identify_image, keyevent, setting, script, config):
+class connect(identify_letter, keyevent, setting, script):
 # class connect(coreapp, identify_image, identify_letter, keyevent, setting, script, config):
     def __init__(self, device: str = None) -> None:
         if device == None:

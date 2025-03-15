@@ -3,12 +3,12 @@ import cv2, os
 import numpy as np
 from io import BytesIO
 from PIL import Image
-from QA_automation_phone.coreapp import coreapp,config, ElementType, math, time, Literal
+from QA_automation_phone.coreapp import coreapp, ElementType, math, time, Literal
+# from QA_automation_phone.coreapp import coreapp,config, ElementType, math, time, Literal
 
-class identify_image:
+class identify_image(coreapp):
     def __init__(self,device: str = None, connect: u2.connect = None, x_screen: int = None, y_screen: int = None) -> None:
-        self.coreapp = coreapp(device, connect, x_screen, y_screen)
-        self.config = config(device, connect, x_screen, y_screen)
+        super().__init__(device, connect, x_screen, y_screen)
         self.device = device
         self.connect = connect
         self.x_screen = x_screen
@@ -24,7 +24,7 @@ class identify_image:
             return 1    
     def get_crop_image(self, x1: int, y1: int, width: int, height: int, output_path: str=None)->bool:
         command = f"adb -s {self.device} exec-out screencap -p"
-        status = self.config.run_command(command=command)
+        status = self.run_command(command=command)
         if status['returncode'] == 0:
             # image = Image.open(BytesIO(stauts['stdout']))
             with Image.open(BytesIO(status['stdout'])) as image:
@@ -41,7 +41,7 @@ class identify_image:
         type_element: ElementType="text",
         index: int=0,
         wait_time: int=2)->bool:
-        bounds = self.coreapp.get_bounds(value, type_element, index, wait_time)
+        bounds = self.get_bounds(value, type_element, index, wait_time)
         if bounds:
             x1, y1, x2, y2 = eval(bounds.replace("][",","))
             width = x2-x1; height = y2-y1
@@ -111,9 +111,9 @@ class identify_image:
         def fine_tune_scroll(y): 
             if y < screen_small or y > screen_small*3:
                 if y < screen_small:
-                    self.config.scroll_center_up_or_down_short(type_scroll="down",duration=duration)
+                    self.scroll_center_up_or_down_short(type_scroll="down",duration=duration)
                 if y > screen_small*3:
-                    self.config.scroll_center_up_or_down_short(type_scroll="up",duration=duration)
+                    self.scroll_center_up_or_down_short(type_scroll="up",duration=duration)
                 time.sleep(1)
                 return self.find_button_by_image(template_path=template_path, threshold=threshold)
             return False
@@ -132,9 +132,9 @@ class identify_image:
                     self.connect.click(x, y)
                 return data
             if type_scroll == "up":
-                self.config.scroll_center_up_or_down(type_scroll="up", duration=duration)
+                self.scroll_center_up_or_down(type_scroll="up", duration=duration)
             else:
-                self.config.scroll_center_up_or_down(type_scroll="down", duration=duration)
+                self.scroll_center_up_or_down(type_scroll="down", duration=duration)
             time.sleep(1)
             new_image = self.screenshot_to_cv2_gray()
             if self.compare_images(img1=image_screen, img2=new_image):

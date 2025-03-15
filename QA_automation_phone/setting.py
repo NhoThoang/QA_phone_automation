@@ -1,11 +1,11 @@
 from QA_automation_phone.config import config
-class setting:
+class setting(config):
     def __init__(self,device: str = None, connect = None, x_screen: int = None, y_screen: int = None) -> None:
+        super().__init__(device=device, connect=connect, x_screen=x_screen, y_screen=y_screen)
         self.device = device
-        self.config=config(device=device, connect=connect, x_screen=x_screen, y_screen=y_screen)
     def open_setting(self, setting: str):
         command = f'adb -s {self.device} shell am start -a android.settings.{setting}'
-        self.config.run_command(command=command)
+        self.run_command(command=command)
     def open_setting_display(self):
         self.open_setting('DISPLAY_SETTINGS')
     def open_setting_sound(self):
