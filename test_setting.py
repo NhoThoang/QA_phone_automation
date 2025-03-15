@@ -63,4 +63,35 @@
 #     threads.append(t)
 # for thread in threads:
 #     thread.start()
-import qa_automation_phone as qa
+# import qa_automation_phone as qa
+
+import QA_automation_phone as qa
+import threading
+# devicess = qa.get_devices()
+# def run(device):
+#     connect = qa.connect(device=device)
+#     connect.scroll_find_element(value="Blood glucose", click=True)
+# threads = []
+# for device in devicess:
+#     t = threading.Thread(target=run, args=(device,))
+#     threads.append(t)
+# for thread in threads:
+#     thread.start()
+# connect.click_element(value="Samsung Health")
+# connect.scroll_find_element(value="Blood pressure", click=True)
+# x,y = connect.scroll_up_and_down_find_element(value="Blood glucose")
+# connect.adb_click(x,y)
+# connect.scroll_find_images(template_path="picture1.png", click=True)
+# connect.scroll_up_and_dow_find_images(template_path="picture1.png", click=True)
+# import time
+# # start = time.time()
+# # connect.connect(text="Blood glucose").click()
+# # print(time.time() - start)
+# start = time.time()
+# connect.show()
+# print(time.time() - start)
+
+# connect.orc_find_text(target_text="Blood glucose", lang="eng",index=1,click=True)
+
+connect = qa.connect()
+connect.orc_find_text(target_text="Blood glucose", lang="eng",index=1,click=True)

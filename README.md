@@ -54,13 +54,32 @@ Dự án này kết nối từ laptop tới server trên điện thoại Android
 ```bash
 pip install QA-automation-phone
 ```
-## tiến hành chạy thử để cài đặt server trên phone
-```bash
+## tiến hành chạy thử trên phone
+### test tốc độ click trên model cũ 
+```python
+import time
 import QA_automation_phone as qa
-connect = qa.u2.connect()
-print(connect.info)
+connect = qa.connect()
+start = time.time()
+connect.connect(text="Blood glucose").click()
+print(time.time() - start)
 ```
+### test tốc độ click trên model mới 
+```python
+import time
+import QA_automation_phone as qa
+connect = qa.connect()
+start = time.time()
+connect.click_element(value="Blood glucose")
+print(time.time() - start)
+```
+model mới được tối ưu hơn chạy nhanh hơn 1 chút 
 ## lấy text, content cần chạy 1 server 
+cần cài đặt 1 websever để lấy màn hình điện thoại 
+```bash
+pip install -U webitor
+```
+sau đó chạy ứng dụng 
 ```bash
 python -m weditor
 ```
@@ -128,7 +147,8 @@ for device_id in devicess:
 for thread in threads:
     thread.start()()
 ```
-
+## Thao tác với orc
+## Thao toác với ảnh
 ## Lưu ý
 - Điện thoại cần bật chế độ nhà phát triển và cấp quyền ADB.
 - Đảm bảo server đang chạy trên điện thoại.
