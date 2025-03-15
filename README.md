@@ -156,7 +156,7 @@ cn = qa.connect(devices[0])
 a= cn.orc_find_text(target_text="Samsung", lang="eng", index=1,click=True)
 print(a)
 ```
-code trên sẽ tìm chữ Samsung ở trên màn hình với lần xuất hiện là thứ 2 nếu target_text="Samsung Health" thì thư viên chưa hỗ trợ miinhf sẽ update sau 
+code trên sẽ tìm chữ Samsung ở trên màn hình với lần xuất hiện là thứ 2 nếu target_text="Samsung Health" thì thư viện chưa hỗ trợ mình sẽ update sau 
 
 ❌ Code này sẽ không tìm được text là **Samsung Health**.
 ```python
@@ -179,7 +179,7 @@ print(a)
 ```
 
 ## Thao toác với ảnh:
-để thao tác với ảnh các bạn cần có môt ảnh cùng kích thước để so sánh thi viện của mình sẽ chuyển hết chúng về đén trắng để so sánh.
+để thao tác với ảnh các bạn cần có môt mẫu để so sánh thi viện của mình sẽ chuyển hết chúng về đen trắng để so sánh.
 để lấy ảnh mẫy từ màn hình cách bạn chạy hàm dưới đây:
 ```python
 import QA_automation_phone as qa
@@ -188,8 +188,8 @@ devices = qa.get_devices()
 connect = qa.connect(device=devices[0])
 connect.get_crop_image(x1=795, y1=1564, width=200, height=300, output_path="./picture1.png")
 ```
-x, y là tọa độ điểm đầy phái trên bên trái của button
-width, height là độ rộng và cao của button 
+x, y là tọa độ điểm đầy phái trên bên trái của button   
+width, height là độ rộng và cao của button   
 sau khi chạy xong check ảnh picture1.png xem đúng chưa.
 ### tiến hành chạy thử nhận diện tìm kiếm vị trí của anh:
 ```python
@@ -209,6 +209,7 @@ connect.find_button_by_image(template_path="./picture1.png", threshold=0.8,click
 connect.scroll_find_images(template_path="./picture1.png",type_scroll="up",click=True)
 connect.scroll_up_and_dow_find_images(template_path="./picture1.png",click=True)
 ```
+👉 **Nếu các bạn test có các issue quay lại video hay tạo issue trên repore này rồi gửi cho mình mình sex fix nhé !**
 ## Lưu ý:
 - Điện thoại cần bật chế độ nhà phát triển và cấp quyền ADB.
 - Đảm bảo server đang chạy trên điện thoại.
